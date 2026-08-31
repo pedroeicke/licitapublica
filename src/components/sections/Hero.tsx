@@ -78,8 +78,6 @@ export default function Hero() {
         video.pause();
       };
 
-      gsap.set(tilt, { transformOrigin: "50% 0%", rotationX: 20 });
-
       // ---------- 1. ENTRADA ----------
       // fromTo, não from. O `.from()` lê o estado FINAL do elemento no
       // momento em que o tween é criado — e em dev o React monta o
@@ -143,6 +141,8 @@ export default function Hero() {
       // parada antes do próximo movimento começar.
       const mm = gsap.matchMedia();
       mm.add("(min-width: 768px)", () => {
+        gsap.set(tilt, { transformOrigin: "50% 0%", rotationX: 20 });
+
         // Quanto a tela precisa subir pra encostar logo abaixo do header.
         const subida = () => {
           const palco = tilt.parentElement as HTMLElement | null;
@@ -220,8 +220,9 @@ export default function Hero() {
           .to({}, { duration: 0.28 });
       });
 
-      // No mobile não existe mergulho (o pin briga com o gesto de scroll),
-      // então o gatilho do vídeo passa a ser simplesmente estar em cena.
+      // No celular não há mergulho: o pin briga com o gesto de scroll, e
+      // sem ele a perspectiva nunca se resolveria. Então a tela nasce em pé
+      // e no fluxo (ver o JSX), e o gatilho do vídeo vira estar em cena.
       mm.add("(max-width: 767px)", () => {
         if (!video) return;
         const io = new IntersectionObserver(
@@ -238,7 +239,7 @@ export default function Hero() {
   return (
     <div
       ref={root}
-      className="relative flex h-svh min-h-[640px] flex-col overflow-hidden bg-paper"
+      className="relative flex min-h-svh flex-col overflow-hidden bg-paper md:h-svh md:min-h-[640px]"
     >
       {/* ---------- ambiente ---------- */}
       <div
@@ -259,9 +260,9 @@ export default function Hero() {
       />
 
       {/* ---------- MANCHETE ---------- */}
-      <div className="relative z-10 flex flex-1 items-center pt-24 pb-[224px]">
+      <div className="relative z-10 flex flex-1 items-center pt-24 pb-10 md:pb-[224px]">
         <div className="h-text mx-auto w-full max-w-[1240px] px-6 text-center md:px-10">
-          <p className="h-eyebrow eyebrow inline-flex items-center gap-2.5 rounded-full border border-line bg-white/70 px-3.5 py-2 text-blue backdrop-blur-sm">
+          <p className="h-eyebrow eyebrow inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-3 py-1.5 text-blue backdrop-blur-sm sm:gap-2.5 sm:px-3.5 sm:py-2">
             <span className="h-1.5 w-1.5 rounded-full bg-blue" />
             {hero.eyebrow}
           </p>
@@ -281,12 +282,12 @@ export default function Hero() {
             {hero.sub}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
-            <a href="#demo" className="h-cta cta">
+          <div className="mx-auto mt-8 flex max-w-[320px] flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3.5">
+            <a href="#demo" className="h-cta cta w-full sm:w-auto">
               {hero.ctaPrimary}
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </a>
-            <a href="#ciclo" className="h-cta cta-ghost">
+            <a href="#ciclo" className="h-cta cta-ghost w-full sm:w-auto">
               {hero.ctaGhost}
             </a>
           </div>
@@ -309,10 +310,10 @@ export default function Hero() {
       {/* mt-auto joga a tela pro fim do flex: ela encosta na borda inferior
           e é cortada por ela (overflow-hidden na seção). */}
       <div
-        className="absolute inset-x-0 top-[74%] flex justify-center px-6 md:px-10"
+        className="relative z-[5] flex justify-center px-6 pb-16 md:absolute md:inset-x-0 md:top-[74%] md:px-10 md:pb-0"
         style={{ perspective: "1700px", perspectiveOrigin: "50% 0%" }}
       >
-        <div className="hs-tilt w-[min(980px,92vw)]">
+        <div className="hs-tilt w-full md:w-[min(980px,92vw)]">
           <HeroStage />
         </div>
 

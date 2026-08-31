@@ -24,7 +24,8 @@ export default function Wordmark({
   variante = "cor",
 }: {
   className?: string;
-  /** Altura em px. A largura sai da proporção do arquivo. */
+  /** Altura de referência em px — define só a proporção do <Image>. Pra
+   *  mudar o tamanho renderizado use className (ex.: "h-[18px] md:h-6"). */
   altura?: number;
   variante?: "cor" | "branca";
 }) {
@@ -37,8 +38,10 @@ export default function Wordmark({
       width={Math.round((altura * 686) / 239)}
       height={altura}
       priority
-      className={cn("w-auto", className)}
-      style={{ height: altura }}
+      // A altura sai de uma CLASSE, não de style inline: inline venceria
+      // qualquer utilitário responsivo e a logo não poderia encolher no
+      // celular. Quem passa className manda; sem ela, vale a padrão.
+      className={cn("w-auto", className ?? "h-6")}
     />
   );
 }

@@ -97,7 +97,7 @@ export default function ModulosSection() {
           Em 3 colunas sobrariam 2 na última, e o mosaico de larguras
           diferentes dava peso de vitrine a uma seção que é lista. */}
       <StaggerReveal
-        className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        className="mt-14 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4"
         stagger={0.055}
       >
         {modulos.itens.map((m) => {
@@ -156,11 +156,11 @@ export default function ModulosSection() {
               </div>
 
               {/* zona de texto */}
-              <div className="relative z-20 flex flex-1 flex-col px-6 pt-1 pb-6">
-                <h3 className="display-tight text-[16.5px] text-fg">
+              <div className="relative z-20 flex flex-1 flex-col px-4 pt-1 pb-5 sm:px-6 sm:pb-6">
+                <h3 className="display-tight text-[14px] text-fg sm:text-[16.5px]">
                   {m.title}
                 </h3>
-                <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted">
+                <p className="mt-1.5 text-[12px] leading-relaxed text-muted sm:text-[13.5px]">
                   {m.desc}
                 </p>
               </div>

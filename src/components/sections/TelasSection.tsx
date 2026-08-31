@@ -80,7 +80,7 @@ export default function TelasSection() {
         <div
           role="tablist"
           aria-label="Telas do produto"
-          className="mt-14 flex flex-wrap gap-1.5 rounded-full border border-line bg-paper-2 p-1.5"
+          className="mt-14 flex gap-1.5 overflow-x-auto rounded-full border border-line bg-paper-2 p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible"
         >
           {telas.abas.map((a, i) => (
             <button
@@ -90,7 +90,7 @@ export default function TelasSection() {
               aria-controls={`painel-${a.id}`}
               onClick={() => trocar(i)}
               className={cn(
-                "relative rounded-full px-4 py-2.5 text-[13.5px] font-medium transition-colors duration-300",
+                "relative shrink-0 rounded-full px-4 py-2.5 text-[13.5px] font-medium whitespace-nowrap transition-colors duration-300",
                 i === ativa ? "text-white" : "text-muted hover:text-fg"
               )}
             >

@@ -76,7 +76,7 @@ export default function Header() {
       <header
         className={cn(
           "fixed inset-x-0 top-3.5 z-[60] mx-auto w-fit transition-[background,border-color,box-shadow] duration-500",
-          "flex max-w-[94vw] items-center gap-1 rounded-full border py-2.5 pr-2.5 pl-4",
+          "flex max-w-[94vw] items-center gap-1 rounded-full border py-1.5 pr-1.5 pl-3 md:py-2.5 md:pr-2.5 md:pl-4",
           "border-white/12 bg-navy/85 backdrop-blur-2xl backdrop-saturate-150",
           scrolled
             ? "shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_20px_50px_-18px_rgba(13,20,60,.55)]"
@@ -88,7 +88,7 @@ export default function Header() {
           className="shrink-0 pr-2 text-white"
           aria-label="Licita Pública — início"
         >
-          <Wordmark altura={24} variante="branca" />
+          <Wordmark variante="branca" className="h-[18px] md:h-6" />
         </a>
 
         <nav
@@ -131,7 +131,7 @@ export default function Header() {
           aria-expanded={aberto}
           aria-controls="menu-mobile"
           aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-          className="ml-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white md:hidden"
+          className="ml-0.5 grid h-9 w-9 shrink-0 place-items-center md:h-10 md:w-10 rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white md:hidden"
         >
           {aberto ? (
             <X className="h-5 w-5" strokeWidth={2} />
@@ -145,7 +145,7 @@ export default function Header() {
       <div
         id="menu-mobile"
         hidden={!aberto}
-        className="dive-navy fixed inset-0 z-50 bg-navy-deep/96 px-6 pt-28 backdrop-blur-xl md:hidden"
+        className="dive-navy fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-navy-deep/96 px-6 pt-24 pb-12 backdrop-blur-xl md:hidden"
       >
         <nav aria-label="Seções" className="flex flex-col">
           {nav.links.map((l) => {
@@ -169,7 +169,7 @@ export default function Header() {
         <a
           href="#demo"
           onClick={() => setAberto(false)}
-          className="cta mt-10 w-full"
+          className="cta mt-8 w-full"
         >
           {nav.cta}
         </a>

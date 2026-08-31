@@ -190,6 +190,16 @@ body {
   letter-spacing: 0.24em;
   text-transform: uppercase;
 }
+/* Mono em caixa alta com 0.24em de tracking ocupa largura demais em 375px:
+   todo eyebrow do site quebrava em duas linhas. O ajuste vive aqui e não
+   em cada seção porque .eyebrow é declarado depois dos utilitários do
+   Tailwind — uma classe utilitária responsiva perderia a especificidade. */
+@media (max-width: 640px) {
+  .eyebrow {
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+  }
+}
 
 /* Texto com brilho — só em headline sobre navy. */
 .text-glow {

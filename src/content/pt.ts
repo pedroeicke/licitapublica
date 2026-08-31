@@ -260,7 +260,7 @@ export const pt = {
   grafo: {
     eyebrow: "O grafo de dados",
     titleLines: ["Os dados públicos, ligados.", "As respostas, com fonte."],
-    body: "Lei, decretos, acórdãos do TCU e dos TCEs, preços do PNCP, SINAPI e BPS — num grafo único e atualizado diariamente. Passe o mouse: a constelação responde.",
+    body: "Lei, decretos, acórdãos do TCU e dos TCEs, preços do PNCP, SINAPI e BPS — num grafo único e atualizado diariamente. Passe o mouse ou toque: a constelação responde.",
     nos: [
       "Lei 14.133",
       "Decretos",

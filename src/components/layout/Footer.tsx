@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto w-full max-w-[1180px]">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div>
-            <Wordmark altura={30} variante="branca" />
+            <Wordmark variante="branca" className="h-7 md:h-[30px]" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
               {footer.linha}
             </p>

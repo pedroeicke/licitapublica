@@ -296,17 +296,37 @@ export default function GrafoSection() {
         alvo.fillStyle = cor;
         alvo.fill();
 
+        // Canvas estreito (celular) pede tipo menor: com 11px os rótulos
+        // se encostavam uns nos outros e o grafo virava sopa de letras.
+        const estreito = w < 520;
         alvo.font =
           n.tipo === "fonte"
-            ? "500 11px ui-monospace, monospace"
-            : "600 12.5px ui-monospace, monospace";
+            ? `500 ${estreito ? 9.5 : 11}px ui-monospace, monospace`
+            : `600 ${estreito ? 10.5 : 12.5}px ui-monospace, monospace`;
         alvo.fillStyle =
           n.tipo === "fonte" ? `rgba(150,164,198,${0.6 + glow * 0.4})` : cor;
         alvo.textBaseline = "middle";
-        // rótulo à esquerda na metade direita, pra não sair da tela
-        const paraEsquerda = n.px > w * 0.72;
+
+        // De que lado o rótulo cabe. Antes isto era um chute — "está
+        // passando de 72% da largura, joga pra esquerda" — e no celular o
+        // chute errava: "Resposta com fonte" caía do lado direito e saía
+        // pela borda. Agora a pergunta é medida, não estimada: o texto só
+        // fica à direita se couber inteiro ali.
+        const folga = r + 10;
+        const larguraTexto = alvo.measureText(n.label).width;
+        const BORDA = 6;
+        const cabeDireita = n.px + folga + larguraTexto <= w - BORDA;
+        const paraEsquerda = !cabeDireita && n.px - folga - larguraTexto >= BORDA;
+
         alvo.textAlign = paraEsquerda ? "right" : "left";
-        alvo.fillText(n.label, n.px + (paraEsquerda ? -(r + 10) : r + 10), n.py!);
+        let x = n.px + (paraEsquerda ? -folga : folga);
+        // Canvas curto demais pros dois lados: encosta no que sobrar em vez
+        // de deixar o rótulo sair da tela.
+        if (!cabeDireita && !paraEsquerda) {
+          alvo.textAlign = "left";
+          x = Math.max(BORDA, w - BORDA - larguraTexto);
+        }
+        alvo.fillText(n.label, x, n.py!);
       });
     };
 
@@ -398,6 +418,7 @@ export default function GrafoSection() {
     tick();
     window.addEventListener("resize", medir);
     wrap.addEventListener("pointermove", onMove);
+    wrap.addEventListener("pointerdown", onMove);
     wrap.addEventListener("pointerleave", onLeave);
 
     return () => {
@@ -405,6 +426,7 @@ export default function GrafoSection() {
       io.disconnect();
       window.removeEventListener("resize", medir);
       wrap.removeEventListener("pointermove", onMove);
+      wrap.removeEventListener("pointerdown", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
     };
   }, []);
