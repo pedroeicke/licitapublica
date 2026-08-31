@@ -76,7 +76,12 @@ export default function CicloHorizontal() {
       {/* h-svh e NADA de min-height maior que a viewport: seção pinada mais
           alta que a tela tem o rodapé cortado por construção, e era isso que
           colava os cards no limite de baixo. O espaçamento abaixo do trilho
-          é explícito (pb) em vez de "o que sobrar". */}
+          é explícito (pb) em vez de "o que sobrar".
+
+          No celular a soma media 813px numa viewport de 812: folga zero, e
+          em qualquer aparelho mais curto o card era cortado embaixo. Cada
+          degrau abaixo tem um passo próprio pra tela pequena — o respiro
+          não pode depender do que sobrar. */}
       <div ref={root} className="relative h-svh overflow-hidden md:min-h-[680px]">
         <div
           aria-hidden
@@ -89,9 +94,9 @@ export default function CicloHorizontal() {
         />
 
         {/* cabeçalho fixo enquanto o trilho corre */}
-        <div className="relative z-10 mx-auto w-full max-w-[1180px] px-6 pt-24 md:px-10">
+        <div className="relative z-10 mx-auto w-full max-w-[1180px] px-6 pt-20 md:px-10 md:pt-24">
           <SectionEyebrow>{ciclo.eyebrow}</SectionEyebrow>
-          <div className="mt-7 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mt-4 flex flex-col gap-4 md:mt-7 md:gap-8 lg:flex-row lg:items-end lg:justify-between">
             <h2
               id="ciclo-title"
               className="display-tight max-w-[14ch] text-[length:var(--text-giant)] text-fg"
@@ -102,13 +107,13 @@ export default function CicloHorizontal() {
                 </span>
               ))}
             </h2>
-            <p className="max-w-[46ch] text-[15px] leading-relaxed text-muted">
+            <p className="max-w-[46ch] text-[13.5px] leading-relaxed text-muted md:text-[15px]">
               {ciclo.intro}
             </p>
           </div>
 
           {/* progresso: trilho + contador de etapa */}
-          <div className="mt-8 flex items-center gap-4">
+          <div className="mt-5 flex items-center gap-4 md:mt-8">
             <div className="relative h-px flex-1 bg-line-strong">
               <span className="ciclo-bar absolute inset-0 origin-left scale-x-0 bg-blue" />
             </div>
@@ -123,17 +128,17 @@ export default function CicloHorizontal() {
         </div>
 
         {/* TRILHO */}
-        <div className="relative mt-8">
+        <div className="relative mt-5 md:mt-8">
           <div
             ref={track}
-            className="flex w-max gap-5 px-6 pb-14 md:px-10 md:pb-20"
+            className="flex w-max gap-4 px-6 pb-10 sm:gap-5 md:px-10 md:pb-20"
           >
             {ciclo.etapas.map((e, i) => (
               <GlowCard
                 key={e.n}
                 as="article"
                 className={cn(
-                  "group flex min-h-[260px] w-[78vw] shrink-0 flex-col justify-between p-6 sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
+                  "group flex min-h-[300px] w-[80vw] shrink-0 flex-col justify-between p-6 sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
                   i === ativo && "card-on",
                 )}
               >
@@ -143,7 +148,7 @@ export default function CicloHorizontal() {
                       sem competir com o título da etapa */}
                     <span
                       className={cn(
-                        "data text-[3.4rem] leading-none font-semibold transition-colors duration-500",
+                        "data text-[3rem] leading-none font-semibold transition-colors duration-500 sm:text-[3.4rem]",
                         i === ativo
                           ? "text-blue/70"
                           : "text-navy/[0.08]",
@@ -160,13 +165,13 @@ export default function CicloHorizontal() {
                   <h3 className="display-tight mt-5 text-2xl text-fg">
                     {e.title}
                   </h3>
-                  <p className="mt-3.5 text-[14.5px] leading-relaxed text-muted">
+                  <p className="mt-3 text-[14px] leading-relaxed text-muted sm:mt-3.5 sm:text-[14.5px]">
                     {e.desc}
                   </p>
                 </div>
 
                 {/* conector: sugere que o card seguinte herda deste */}
-                <div className="mt-7 flex items-center gap-2 text-faint">
+                <div className="mt-6 flex items-center gap-2 text-faint sm:mt-7">
                   <span className="h-px w-full bg-line" />
                   <span className="data shrink-0 text-[10px] tracking-[0.18em] uppercase">
                     {i < ciclo.etapas.length - 1
