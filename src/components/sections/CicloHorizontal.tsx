@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { content } from "@/content";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/lib/useMediaQuery";
 import { SectionEyebrow } from "@/components/ui/Section";
 import GlowCard from "@/components/ui/GlowCard";
 
@@ -19,21 +18,23 @@ import GlowCard from "@/components/ui/GlowCard";
 // A barra de progresso em cima não é enfeite — em pin longo o usuário
 // precisa saber quanto falta, senão sente que travou o scroll.
 //
-// MOBILE: pin horizontal em touch é hostil (briga com o gesto nativo de
-// voltar). Abaixo de 768px vira carrossel com scroll-snap nativo, que é
-// o gesto que o usuário já espera.
+// MOBILE: o mesmo mergulho. A versão anterior virava carrossel de swipe
+// abaixo de 768px, com o argumento de que pin em touch é hostil — mas o
+// que briga com o gesto nativo de voltar é o ARRASTO horizontal, não o
+// pin. E o carrossel tinha um custo pior: sem affordance, quem descia a
+// página via um card e passava direto pelos outros oito. Descer para
+// avançar é o mesmo contrato nos dois, e é o que a seção promete.
 // ============================================================
 
 export default function CicloHorizontal() {
   const { ciclo } = content;
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
-  const isMobile = useMediaQuery("(max-width: 767px)");
   const [ativo, setAtivo] = useState(0);
 
   useGSAP(
     () => {
-      if (isMobile || !track.current) return;
+      if (!track.current) return;
 
       const t = track.current;
       const distancia = () => t.scrollWidth - window.innerWidth;
@@ -67,7 +68,7 @@ export default function CicloHorizontal() {
         0,
       );
     },
-    { scope: root, dependencies: [isMobile], revertOnUpdate: true },
+    { scope: root },
   );
 
   return (
@@ -76,7 +77,7 @@ export default function CicloHorizontal() {
           alta que a tela tem o rodapé cortado por construção, e era isso que
           colava os cards no limite de baixo. O espaçamento abaixo do trilho
           é explícito (pb) em vez de "o que sobrar". */}
-      <div ref={root} className="relative h-svh min-h-[680px] overflow-hidden">
+      <div ref={root} className="relative h-svh overflow-hidden md:min-h-[680px]">
         <div
           aria-hidden
           className="orb orb-a top-[-20%] right-[-10%] h-[60vh] w-[52vw] max-w-[760px]"
@@ -125,22 +126,16 @@ export default function CicloHorizontal() {
         <div className="relative mt-8">
           <div
             ref={track}
-            className={cn(
-              "flex gap-5 pb-14 md:pb-20",
-              isMobile
-                ? "snap-x snap-mandatory overflow-x-auto px-6 [scrollbar-width:none]"
-                : "w-max px-6 md:px-10",
-            )}
+            className="flex w-max gap-5 px-6 pb-14 md:px-10 md:pb-20"
           >
             {ciclo.etapas.map((e, i) => (
               <GlowCard
                 key={e.n}
                 as="article"
                 className={cn(
-                  "group flex w-[78vw] shrink-0 snap-center flex-col justify-between p-7 sm:w-[62vw] md:w-[380px]",
-                  !isMobile && i === ativo && "card-on",
+                  "group flex min-h-[260px] w-[78vw] shrink-0 flex-col justify-between p-6 sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
+                  i === ativo && "card-on",
                 )}
-                style={{ minHeight: 300 }}
               >
                 <div>
                   <div className="flex items-baseline justify-between gap-4">
@@ -149,7 +144,7 @@ export default function CicloHorizontal() {
                     <span
                       className={cn(
                         "data text-[3.4rem] leading-none font-semibold transition-colors duration-500",
-                        !isMobile && i === ativo
+                        i === ativo
                           ? "text-blue/70"
                           : "text-navy/[0.08]",
                       )}

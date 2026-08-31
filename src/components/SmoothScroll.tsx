@@ -23,9 +23,26 @@ function Sync() {
     // Pin-spacer já criado → libera a cortina (#tese) sem risco de sobrepor
     // o hero por um frame.
     document.documentElement.classList.add("lp-ready");
-    const onResize = () => ScrollTrigger.refresh();
+    // No celular, esconder e mostrar a barra de endereço dispara `resize`
+    // a cada troca de direção do dedo. Um refresh ali no meio remede todos
+    // os pins e o conteúdo salta — é a causa mais comum de seção pinada
+    // "quebrada" em telefone. A largura, essa sim, só muda quando a
+    // viewport muda de verdade (rotação, redimensionar no desktop).
+    let larguraAnterior = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === larguraAnterior) return;
+      larguraAnterior = window.innerWidth;
+      ScrollTrigger.refresh();
+    };
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    // Rotação não mexe só na largura: o layout inteiro muda, então aqui o
+    // refresh é sempre devido.
+    const onOrient = () => ScrollTrigger.refresh();
+    window.addEventListener("orientationchange", onOrient);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onOrient);
+    };
   }, [lenis]);
 
   useEffect(() => {
