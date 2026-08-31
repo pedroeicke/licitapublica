@@ -1,0 +1,528 @@
+@import "tailwindcss";
+
+/* ============================================================
+   LICITA PÚBLICA — Design System v3
+
+   PALETA: azul e branco. Só.
+   O navy #0D143C é da marca do cliente e não muda. O branco é o mundo.
+   Verde e ouro saíram da interface — vivem só dentro do símbolo das fitas,
+   que é o logo e continua intocado.
+
+   PROPORÇÃO (a correção da v2): o site é predominantemente BRANCO.
+   Oito seções claras contra quatro em navy. O navy é mergulho, momento —
+   não ambiente. Ele aparece onde a imersão paga: hero, consultor, grafo,
+   demonstração.
+
+   Por isso os tokens de texto/linha/superfície são definidos em CLARO no
+   :root, e `.dive-navy` os inverte. O tema padrão é o branco; o escuro é a
+   exceção declarada.
+
+   PAPÉIS:
+     branco  = o mundo
+     navy    = mergulho, profundidade, superfície de marca
+     azul    = AÇÃO e LUZ (CTA, link ativo, glow, grafo)
+   ============================================================ */
+
+:root {
+  /* --- o mundo --- */
+  --lp-paper: #FFFFFF;
+  --lp-paper-2: #F4F7FC;
+  --lp-paper-3: #E9F0FA;
+
+  /* --- navy da marca --- */
+  --lp-navy: #0D143C;
+  --lp-navy-2: #141F5C;
+  --lp-navy-deep: #070C28;
+
+  /* --- azul: ação e luz --- */
+  --lp-blue: #2B62E0;
+  --lp-blue-lite: #5B9BFF;
+  --lp-blue-soft: #A9C9FF;
+
+  /* --- verde e ouro da marca ---
+     Só entram nos MERGULHOS NAVY, como acento dentro do texto branco — é o
+     jogo do material original do cliente: fundo azul, texto branco, e as
+     cores da logo pontuando. No mundo claro eles não aparecem: sobre papel
+     o verde perde contraste e o ouro some.
+     Tons puxados pra cima em relação à logo, porque sobre navy os
+     originais (#70AC44 / #F0C044) escurecem demais. */
+  --lp-leaf: #8ACB52;
+  --lp-gold: #F7CB4E;
+
+  /* --- texto: TEMA CLARO é o padrão --- */
+  --lp-fg: #0D143C;
+  --lp-muted: #58627A;
+  --lp-faint: #93A0B8;
+
+  --lp-line: rgba(13, 20, 60, 0.1);
+  --lp-line-strong: rgba(13, 20, 60, 0.2);
+
+  --lp-surface: #FFFFFF;
+  --lp-surface-2: var(--lp-paper-2);
+  --lp-card-shadow: 0 1px 2px rgba(13, 20, 60, 0.05),
+    0 20px 44px -26px rgba(13, 20, 60, 0.3);
+  --lp-card-shadow-hover: 0 1px 2px rgba(13, 20, 60, 0.06),
+    0 30px 60px -26px rgba(43, 98, 224, 0.35);
+  --lp-card-inset: 0 0 0 0 transparent;
+
+  --lp-glow: rgba(91, 155, 255, 0.55);
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ------------------------------------------------------------
+   MERGULHO NAVY — a exceção. Inverte os tokens em vez de reescrever
+   cada classe filha.
+   ------------------------------------------------------------ */
+.dive-navy {
+  --lp-fg: #EEF3FF;
+  --lp-muted: #97A4C6;
+  --lp-faint: #5F6B95;
+
+  --lp-line: rgba(255, 255, 255, 0.09);
+  --lp-line-strong: rgba(255, 255, 255, 0.2);
+
+  --lp-surface: rgba(255, 255, 255, 0.04);
+  --lp-surface-2: rgba(255, 255, 255, 0.025);
+  --lp-card-shadow: 0 20px 46px -22px rgba(0, 0, 0, 0.75);
+  --lp-card-shadow-hover: 0 30px 66px -22px rgba(0, 0, 0, 0.85);
+  --lp-card-inset: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  background: var(--lp-navy-deep);
+  color: var(--lp-fg);
+}
+
+@theme inline {
+  --color-paper: var(--lp-paper);
+  --color-paper-2: var(--lp-paper-2);
+  --color-paper-3: var(--lp-paper-3);
+  --color-navy: var(--lp-navy);
+  --color-navy-2: var(--lp-navy-2);
+  --color-navy-deep: var(--lp-navy-deep);
+  --color-blue: var(--lp-blue);
+  --color-blue-lite: var(--lp-blue-lite);
+  --color-blue-soft: var(--lp-blue-soft);
+  --color-leaf: var(--lp-leaf);
+  --color-gold: var(--lp-gold);
+  --color-fg: var(--lp-fg);
+  --color-muted: var(--lp-muted);
+  --color-faint: var(--lp-faint);
+  --color-line: var(--lp-line);
+  --color-line-strong: var(--lp-line-strong);
+  --color-surface: var(--lp-surface);
+
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-brand: var(--font-montserrat), system-ui, sans-serif;
+
+  --text-mega: clamp(2.1rem, 3.8vw, 3.6rem);
+  --text-giant: clamp(1.8rem, 3.2vw, 3rem);
+  --text-lead: clamp(1.02rem, 1.15vw, 1.22rem);
+}
+
+html {
+  background: var(--lp-paper);
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--lp-paper);
+  color: var(--lp-fg);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.62;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--lp-blue-lite);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--lp-blue);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------
+   TIPOGRAFIA — Archivo variável no eixo `wdth`, puxada pra ~112.
+   Letra expandida sustenta peso médio em corpo grande, que é o que dá
+   autoridade sem gritar.
+   ------------------------------------------------------------ */
+.display {
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1;
+}
+
+.display-tight {
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 108;
+  font-weight: 500;
+  letter-spacing: -0.016em;
+  line-height: 1.08;
+}
+
+/* Wordmark: Montserrat itálica. O símbolo das fitas mantém as cores da
+   bandeira — é o logo do cliente, não paleta de interface. */
+.brand {
+  font-family: var(--font-montserrat), system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.data {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-feature-settings: "zero" 1;
+}
+
+.eyebrow {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Texto com brilho — só em headline sobre navy. */
+.text-glow {
+  text-shadow: 0 0 70px rgba(91, 155, 255, 0.3);
+}
+
+/* ------------------------------------------------------------
+   MATÉRIA — o card se adapta ao tema pelos tokens, sem duplicar regra.
+   ------------------------------------------------------------ */
+.card {
+  /* SEM position aqui. `.card` é declarada depois das utilities do Tailwind
+     no arquivo, então `position: relative` ganhava de `.absolute` em
+     qualquer elemento que combinasse as duas classes — e o card ia parar no
+     fluxo, esticado pelo flex do pai. Quem precisa de contexto de
+     posicionamento declara `relative` no próprio elemento (o `.glow` já
+     declara). */
+  border: 1px solid var(--lp-line);
+  border-radius: 1rem;
+  background: var(--lp-surface);
+  box-shadow: var(--lp-card-inset), var(--lp-card-shadow);
+  transition: border-color 0.45s var(--ease-expo),
+    box-shadow 0.45s var(--ease-expo), transform 0.45s var(--ease-expo);
+}
+.card:hover {
+  border-color: var(--lp-line-strong);
+  box-shadow: var(--lp-card-inset), var(--lp-card-shadow-hover);
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Card em destaque: quina de cima azul. */
+.card-on {
+  border-color: rgba(43, 98, 224, 0.4);
+  box-shadow: inset 0 1px 0 rgba(169, 201, 255, 0.4),
+    0 26px 60px -24px rgba(43, 98, 224, 0.45);
+}
+.dive-navy .card-on {
+  border-color: rgba(91, 155, 255, 0.42);
+  background: rgba(43, 98, 224, 0.1);
+  box-shadow: inset 0 1px 0 rgba(169, 201, 255, 0.3),
+    0 26px 60px -22px rgba(43, 98, 224, 0.4);
+}
+
+/* ------------------------------------------------------------
+   GLOW QUE SEGUE O PONTEIRO
+
+   Duas camadas: um anel de luz na borda (::before, recortado por
+   mask-composite pra sobrar só a moldura de 1px) e um halo difuso por
+   dentro (::after). Ambos centrados em --mx/--my, que o GlowCard escreve
+   no elemento a cada pointermove.
+
+   A máscara é o truque: pinta o gradiente numa caixa com padding de 1px e
+   subtrai o miolo. Sobra o gradiente só na borda — borda com gradiente
+   real, que o CSS não faz nativamente.
+   ------------------------------------------------------------ */
+.glow {
+  position: relative;
+  isolation: isolate;
+}
+.glow::before,
+.glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-expo);
+}
+/* anel na borda */
+.glow::before {
+  padding: 1px;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--lp-blue-lite),
+    transparent 62%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: 1;
+}
+/* halo interno */
+.glow::after {
+  background: radial-gradient(
+    280px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(91, 155, 255, 0.14),
+    transparent 60%
+  );
+  z-index: -1;
+}
+.glow:hover::before,
+.glow:hover::after {
+  opacity: 1;
+}
+
+/* Só o anel da borda, sem o halo interno. Use quando o card tem uma zona
+   própria pro brilho de dentro — em Módulos o halo do .glow cobria o card
+   inteiro e acendia por trás do texto também, que não é o que se quer. */
+.glow--borda::after {
+  content: none;
+}
+
+/* Orbe de luz — o bloom azul de fundo das seções. */
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(110px);
+}
+
+/* Aurora: dois orbes respirando fora de fase. Dá vida sem custar WebGL
+   nem um frame de rAF — é animação de composição pura. */
+@keyframes lp-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -7%, 0) scale(1.12);
+  }
+}
+@keyframes lp-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  50% {
+    transform: translate3d(-8%, 6%, 0) scale(0.94);
+  }
+}
+.orb-a {
+  animation: lp-drift-a 17s ease-in-out infinite;
+}
+.orb-b {
+  animation: lp-drift-b 21s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------
+   TEXTURA
+   ------------------------------------------------------------ */
+.texture-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+}
+.dive-navy .texture-grain {
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+}
+
+/* ------------------------------------------------------------
+   CTA PRIMÁRIO — navy sólido com fluxo de luz azul na borda.
+
+   Sobre branco o preenchimento é navy (a marca); sobre navy ele clareia
+   pro azul de ação, senão sumiria no fundo. A faixa de luz girando na
+   borda é um conic-gradient animado — @property registra --sb-angle como
+   <angle>, sem o que o navegador trataria como string e a animação
+   saltaria de 0 a 360 em vez de interpolar.
+   ------------------------------------------------------------ */
+@property --sb-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --sb-percent {
+  syntax: "<percentage>";
+  initial-value: 6%;
+  inherits: false;
+}
+
+/* Base compartilhada: é o que garante que os dois botões tenham a MESMA
+   altura e a mesma caixa. Antes cada um tinha sua borda e seu padding, e a
+   diferença de 1px na borda já bastava pra eles ficarem desalinhados. */
+.cta,
+.cta-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 3.125rem;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  font-size: 0.93rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.008em;
+  white-space: nowrap;
+}
+
+.cta {
+  --cta-fill-1: var(--lp-navy-2);
+  --cta-fill-2: var(--lp-navy);
+  color: #fff;
+  background: linear-gradient(180deg, var(--cta-fill-1), var(--cta-fill-2))
+      padding-box,
+    conic-gradient(
+        from var(--sb-angle),
+        transparent,
+        var(--lp-blue-lite) var(--sb-percent),
+        #ffffff calc(var(--sb-percent) * 2),
+        var(--lp-blue-lite) calc(var(--sb-percent) * 3),
+        transparent calc(var(--sb-percent) * 4)
+      )
+      border-box;
+  box-shadow: 0 10px 30px -10px rgba(43, 98, 224, 0.55);
+  animation: sb-angle 3.4s linear infinite;
+  transition: transform 0.35s var(--ease-expo),
+    box-shadow 0.35s var(--ease-expo), --sb-percent 0.6s var(--ease-expo);
+}
+.dive-navy .cta {
+  --cta-fill-1: var(--lp-blue-lite);
+  --cta-fill-2: var(--lp-blue);
+  box-shadow: 0 12px 36px -10px rgba(91, 155, 255, 0.7);
+}
+.cta:hover {
+  --sb-percent: 20%;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 46px -12px rgba(43, 98, 224, 0.65);
+}
+.cta:active {
+  transform: translateY(0);
+}
+
+@keyframes sb-angle {
+  to {
+    --sb-angle: 360deg;
+  }
+}
+
+/* Em touch o conic repinta todo frame e engasga o scroll: vira sólido. */
+@media (hover: none) {
+  .cta {
+    border-color: rgba(91, 155, 255, 0.5);
+    animation: none;
+  }
+}
+
+.cta-ghost {
+  border-color: var(--lp-line-strong);
+  background: transparent;
+  font-weight: 500;
+  color: var(--lp-fg);
+  transition: border-color 0.35s var(--ease-expo),
+    background 0.35s var(--ease-expo), box-shadow 0.35s var(--ease-expo);
+}
+
+/* Variante compacta pro header. Sem o halo azul do CTA grande: dentro da
+   pill, aquele brilho transbordava a borda arredondada e dava a impressão
+   de que o botão estava saindo pra fora. */
+.cta--sm {
+  min-height: 2.5rem;
+  padding: 0 1.15rem;
+  font-size: 0.8125rem;
+  box-shadow: none;
+}
+.cta--sm:hover {
+  box-shadow: 0 8px 22px -10px rgba(43, 98, 224, 0.6);
+}
+.cta-ghost:hover {
+  border-color: var(--lp-blue);
+  background: rgba(43, 98, 224, 0.06);
+  box-shadow: 0 0 0 4px rgba(91, 155, 255, 0.12);
+}
+
+/* ------------------------------------------------------------
+   MARCAS DE REGISTRO — os "+" das quinas. Desenho técnico.
+   ------------------------------------------------------------ */
+.reg-marks::before,
+.reg-marks::after {
+  content: "+";
+  position: absolute;
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--lp-faint);
+  opacity: 0.7;
+  pointer-events: none;
+}
+.reg-marks::before {
+  top: -22px;
+  left: -22px;
+}
+.reg-marks::after {
+  right: -22px;
+  bottom: -22px;
+}
+
+/* ------------------------------------------------------------
+   Lenis
+   ------------------------------------------------------------ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* ------------------------------------------------------------
+   Marquee
+   ------------------------------------------------------------ */
+@keyframes lp-scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: lp-scroll-left var(--duration, 40s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-marquee,
+  .orb-a,
+  .orb-b {
+    animation: none !important;
+  }
+}
