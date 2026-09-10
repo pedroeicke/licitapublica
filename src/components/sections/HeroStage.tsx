@@ -24,17 +24,15 @@ import { content } from "@/content";
 // O vídeo começa PAUSADO, mostrando o poster. Quem dá play é o Hero,
 // quando a tela termina de se levantar.
 //
-// O CELULAR AO LADO (pedido de 06:31) não repete a gravação: um painel de
-// desktop espremido num aparelho de 150px vira texto ilegível e ainda
-// sugere uma interface móvel que não foi mostrada em lugar nenhum. Ele
-// mostra a peça mais forte do produto — a resposta com a fonte oficial —
-// em conteúdo que já vive em pt.ts. É MOCKUP, e some abaixo de lg: dentro
-// de um celular de verdade, um celular desenhado é piada.
+// Houve um celular ao lado daqui (pedido de 06:31 da reunião, removido
+// em seguida): ele cobria a gravação, que é o assunto do palco. Se voltar,
+// não pode ser por cima do vídeo — e encostá-lo inteiramente fora da
+// janela também não resolve, porque o mergulho escala o palco até 1.2 e a
+// borda direita passa da viewport.
 // ============================================================
 
 export default function HeroStage() {
   const { visual } = content.hero;
-  const { consultor } = content;
 
   return (
     <div className="hs-window relative w-full">
@@ -77,53 +75,6 @@ export default function HeroStage() {
         />
       </div>
 
-      {/* ---------- CELULAR ---------- */}
-      {/* Fica dentro de .hs-window de propósito: herda a inclinação e o
-          mergulho do palco, então os dois se levantam juntos como uma peça
-          só, em vez de o aparelho flutuar por cima da cena.
-
-          A PROPORÇÃO é fixada (9/19.5). Sem ela o quadro encolhia até a
-          altura do conteúdo e virava um retângulo quase quadrado — que não
-          lê como telefone nenhum. Com a proporção fixa, a tipografia pode
-          crescer até ficar legível em vez de virar ruído cinza. */}
-      <div
-        aria-hidden
-        className="absolute top-[12%] -right-[8%] hidden w-[19%] max-w-[196px] xl:block"
-      >
-        <div className="relative flex aspect-[9/19.5] flex-col overflow-hidden rounded-[1.7rem] border-[3px] border-navy/85 bg-white shadow-[0_34px_70px_-26px_rgba(13,20,60,0.6)]">
-          {/* entalhe */}
-          <span className="absolute top-2 left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-navy/20" />
-
-          <div className="flex flex-1 flex-col gap-2 px-3 pt-7 pb-4">
-            <p className="data text-[6px] tracking-[0.16em] text-faint uppercase">
-              {consultor.eyebrow}
-            </p>
-
-            <div className="rounded-lg rounded-tl-sm border border-line bg-paper-2 px-2 py-1.5">
-              <p className="text-[7px] leading-[1.45] text-fg">
-                {consultor.pergunta.texto}
-              </p>
-            </div>
-
-            <div className="ml-auto w-[94%] rounded-lg rounded-tr-sm border border-blue/25 bg-blue/[0.07] px-2 py-1.5">
-              <p className="text-[7px] leading-[1.45] text-fg">
-                {consultor.resposta.antes}
-                <strong className="font-semibold text-gold">
-                  {consultor.resposta.ref}
-                </strong>
-              </p>
-            </div>
-
-            {/* mt-auto encosta a fonte na base: é a âncora da cena, e é ela
-                que o corte da viewport pega por último */}
-            <div className="mt-auto rounded-lg border border-gold/35 bg-gold/[0.09] px-2 py-2">
-              <p className="data text-[5.5px] leading-[1.5] tracking-[0.12em] text-gold uppercase">
-                {consultor.fonte.label}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
