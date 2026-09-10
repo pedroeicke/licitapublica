@@ -6,6 +6,7 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import Reveal from "@/components/motion/Reveal";
 import StaggerReveal from "@/components/motion/StaggerReveal";
 import { SectionEyebrow, SectionTitle } from "@/components/ui/Section";
+import { cn } from "@/lib/utils";
 
 // ============================================================
 // PESQUISA DE PREÇOS — mergulho claro.
@@ -14,6 +15,13 @@ import { SectionEyebrow, SectionTitle } from "@/components/ui/Section";
 // comum dos tribunais"). No original ela era um parágrafo denso seguido de
 // dez pills soltas — informação de conformidade tratada como tag cloud.
 //
+// Uma cor da marca por faixa, na ordem em que a logo se lê: as duas fitas
+// (verde e ouro) e depois o azul da tipografia. NÃO é escala de risco — a
+// criticidade de uma curva ABC já está escrita embaixo de cada barra, em
+// texto. Por isso trocar as três de azul por três cores não custa
+// informação a quem não distingue cor: nenhum dado aqui depende dela.
+const CORES_FAIXA = ["bg-leaf", "bg-gold", "bg-blue"];
+
 // Aqui a Curva ABC vira gráfico de verdade, com as barras crescendo por
 // scroll e o total contando até o valor. Números que se movem são lidos;
 // números estáticos dentro de parágrafo, não.
@@ -104,7 +112,7 @@ export default function PrecosSection() {
               </figcaption>
 
               <div className="mt-8 space-y-6">
-                {precos.curva.faixas.map((f) => (
+                {precos.curva.faixas.map((f, i) => (
                   <div key={f.classe}>
                     <div className="flex items-baseline justify-between">
                       <span className="data text-sm font-semibold text-fg">
@@ -116,7 +124,10 @@ export default function PrecosSection() {
                     </div>
                     <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-paper-2">
                       <div
-                        className="pp-bar h-full rounded-full bg-blue"
+                        className={cn(
+                          "pp-bar h-full rounded-full",
+                          CORES_FAIXA[i] ?? "bg-blue",
+                        )}
                         style={{ width: `${f.pct}%` }}
                       />
                     </div>
