@@ -1,513 +1,225 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { ArrowUpRight, Fingerprint, Pause, Play } from "lucide-react";
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
 import { SectionEyebrow, SectionTitle } from "@/components/ui/Section";
+import styles from "./GrafoSection.module.css";
 
-// ============================================================
-// GRAFO — o clímax.
-//
-// No site do cliente isto era a seção 6, enterrada, e o hero gastava WebGL
-// numa constelação genérica que não significava nada. Mas o grafo É a tese
-// do produto — dados públicos ligados, resposta com fonte. Aqui cada ponto
-// tem nome e cada linha tem sentido.
-//
-// Canvas 2D, não WebGL: são 8 nós e 7 arestas. WebGL custaria um runtime
-// inteiro (three + fiber, ~150kb) pra desenhar o que o 2D desenha de graça.
-//
-// ------------------------------------------------------------------
-// O QUE MUDOU EM RELAÇÃO À VERSÃO ANTERIOR (guardada em
-// GrafoSection.anterior.tsx). Três coisas, e nenhuma exige dependência
-// nova — é o que separa "gradiente azul" de "isso tem luz":
-//
-//  1. BLOOM DE VERDADE. A luz é desenhada uma segunda vez num canvas
-//     fora de tela, borrada e composta por cima com `lighter`. Glow que
-//     SANGRA pra fora do traço, em vez de um radial-gradient colado
-//     atrás de cada ponto.
-//
-//     O canvas de brilho roda a METADE da resolução: borrar custa em
-//     função da área, e como o resultado é borrado de qualquer jeito,
-//     ninguém percebe a diferença. Quatro vezes mais barato.
-//
-//  2. ARESTAS CURVAS. Bezier quadrática com o ponto de controle deslocado
-//     perpendicularmente ao meio da reta, alternando o lado por índice —
-//     as linhas se abrem em leque em vez de convergirem como raios de
-//     roda. E o pulso percorre a CURVA, não a corda dela.
-//
-//  3. DESENHO PROGRESSIVO. Ao entrar em cena as arestas se desenham da
-//     fonte até o processo, e do processo até a resposta — a direção do
-//     argumento acontece uma vez, na frente do leitor, antes de virar
-//     loop.
-// ============================================================
-
-type No = {
-  label: string;
-  // posição normalizada (0..1) sobre a área do canvas
-  x: number;
-  y: number;
-  tipo: "fonte" | "processo" | "resposta";
-  px?: number;
-  py?: number;
-  glow?: number;
-};
-
-const LAYOUT: No[] = [
-  { label: "Lei 14.133", x: 0.10, y: 0.18, tipo: "fonte" },
-  { label: "Decretos", x: 0.04, y: 0.48, tipo: "fonte" },
-  { label: "TCU · TCEs", x: 0.10, y: 0.78, tipo: "fonte" },
-  { label: "PNCP", x: 0.34, y: 0.10, tipo: "fonte" },
-  { label: "SINAPI", x: 0.30, y: 0.9, tipo: "fonte" },
-  { label: "BPS", x: 0.29, y: 0.59, tipo: "fonte" },
-  { label: "Seu processo", x: 0.50, y: 0.48, tipo: "processo" },
-  { label: "Resposta com fonte", x: 0.80, y: 0.48, tipo: "resposta" },
-  { label: "DFD", x: 0.67, y: 0.11, tipo: "resposta" },
-  { label: "ETP", x: 0.93, y: 0.23, tipo: "resposta" },
-  { label: "TR", x: 0.94, y: 0.72, tipo: "resposta" },
-  { label: "Edital e Contrato", x: 0.68, y: 0.90, tipo: "resposta" },
+type Point = { x: number; y: number };
+type GraphNode = { label: string; caption: string; detail: string; x: number; y: number; mx: number; my: number; kind: "source" | "output" };
+const NODES: GraphNode[] = [
+  { label: "Lei 14.133", caption: "Legislação", detail: "A base legal conectada ao contexto da sua contratação.", x: 19, y: 15, mx: 18, my: 12, kind: "source" },
+  { label: "Decretos", caption: "Regulamentação", detail: "Regulamentos que complementam a leitura da legislação.", x: 11, y: 36, mx: 50, my: 12, kind: "source" },
+  { label: "TCU · TCEs", caption: "Jurisprudência", detail: "Entendimentos dos tribunais de contas ligados ao seu processo.", x: 16, y: 61, mx: 82, my: 12, kind: "source" },
+  { label: "PNCP", caption: "Contratações públicas", detail: "Dados de contratações públicas para apoiar a pesquisa de preços.", x: 26, y: 82, mx: 18, my: 24, kind: "source" },
+  { label: "SINAPI", caption: "Custos de construção", detail: "Referências de custos para obras e serviços de engenharia.", x: 10, y: 84, mx: 50, my: 24, kind: "source" },
+  { label: "BPS", caption: "Preços em saúde", detail: "Referências de preços para compras na área da saúde.", x: 30, y: 39, mx: 82, my: 24, kind: "source" },
+  { label: "DFD", caption: "A demanda", detail: "Documento de Formalização da Demanda: o ponto de partida da contratação.", x: 78, y: 14, mx: 18, my: 75, kind: "output" },
+  { label: "ETP", caption: "O planejamento", detail: "Estudo Técnico Preliminar: contexto e referências para planejar a solução.", x: 88, y: 34, mx: 50, my: 75, kind: "output" },
+  { label: "Resposta com fonte", caption: "A fundamentação", detail: "Respostas conectadas às fontes, para consultar e conferir a fundamentação.", x: 77, y: 51, mx: 27, my: 88, kind: "output" },
+  { label: "TR", caption: "A especificação", detail: "Termo de Referência: as definições da contratação reunidas em um documento.", x: 88, y: 73, mx: 82, my: 75, kind: "output" },
+  { label: "Edital e Contrato", caption: "A contratação", detail: "O conhecimento do processo acompanha a elaboração do edital e do contrato.", x: 71, y: 86, mx: 73, my: 88, kind: "output" },
 ];
 
-// Fonte em azul-acinzentado, processo no verde da marca, resposta em ouro:
-// a informação vai ganhando luz conforme atravessa o grafo. É o argumento
-// encenado — dado bruto entra, resposta verificada sai.
-const COR = {
-  fonte: "#7C8CB8",
-  processo: "#8ACB52",
-  resposta: "#F7CB4E",
-} as const;
-
-// Quanto a aresta se afasta da reta, em fração do seu comprimento.
-const CURVATURA = 0.13;
-// Escala do canvas de brilho. 0.5 = metade da resolução em cada eixo.
-const ESCALA_BRILHO = 0.5;
-
-/** Ponto sobre a bezier quadrática em t. */
-function pontoBezier(
-  ax: number,
-  ay: number,
-  cx: number,
-  cy: number,
-  bx: number,
-  by: number,
-  t: number
-) {
+function cubic(a: Point, b: Point, c: Point, d: Point, t: number): Point {
   const u = 1 - t;
-  return {
-    x: u * u * ax + 2 * u * t * cx + t * t * bx,
-    y: u * u * ay + 2 * u * t * cy + t * t * by,
-  };
+  return { x: u ** 3 * a.x + 3 * u * u * t * b.x + 3 * u * t * t * c.x + t ** 3 * d.x,
+    y: u ** 3 * a.y + 3 * u * u * t * b.y + 3 * u * t * t * c.y + t ** 3 * d.y };
 }
 
 export default function GrafoSection() {
   const { grafo } = content;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<number | null>(null);
+  const pausedRef = useRef(false);
+  const redrawRef = useRef<(() => void) | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
+  const active = hovered ?? selected;
+
+  useEffect(() => { activeRef.current = active; redrawRef.current?.(); }, [active]);
+  useEffect(() => { pausedRef.current = paused; redrawRef.current?.(); }, [paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const wrap = wrapRef.current;
-    if (!canvas || !wrap) return;
+    const scene = sceneRef.current;
+    if (!canvas || !scene) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const narrow = window.matchMedia("(max-width: 767px)");
+    const core = scene.querySelector<HTMLElement>(`.${styles.core}`);
+    let width = 0, height = 0, radius = 72, time = 0, last = 0, raf = 0;
+    let visible = false;
 
-    // Canvas de brilho: mesma cena, só o que emite luz, em meia resolução.
-    const brilho = document.createElement("canvas");
-    const bctx = brilho.getContext("2d");
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      const mobile = narrow.matches;
+      const center = { x: width * .5, y: height * .49 };
+      const selectedIndex = activeRef.current;
 
-    // `ctx.filter` não existe em navegador antigo. Sem ele o bloom é
-    // pulado e o grafo continua legível — degrada, não quebra.
-    const temFiltro = (() => {
-      if (!bctx) return false;
-      ctx.filter = "blur(1px)";
-      const ok = ctx.filter !== "none";
-      ctx.filter = "none";
-      return ok;
-    })();
+      // Filaments move, but their HTML labels and endpoints remain steady.
+      NODES.forEach((node, index) => {
+        const output = node.kind === "output";
+        const color = output ? "224,190,113" : "144,173,207";
+        const lit = selectedIndex === index;
+        const alpha = selectedIndex === null ? 1 : lit ? 1.85 : .25;
+        const anchor = { x: width * (mobile ? node.mx : node.x) / 100, y: height * (mobile ? node.my : node.y) / 100 };
+        if (mobile) anchor.y += output ? -23 : 24;
+        else anchor.x += output ? -38 : 40;
 
-    const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)")
-      .matches;
+        for (let strand = 0; strand < 7; strand++) {
+          const spread = strand - 3;
+          const wave = Math.sin(time * .28 + index * 1.7 + strand * .4) * (mobile ? 5 : 12);
+          const end = { x: center.x + (mobile ? spread * 5 : (output ? 1 : -1) * radius * .8), y: center.y + (mobile ? (output ? 1 : -1) * radius * .8 : spread * 9) };
+          const nearAnchor = mobile
+            ? { x: anchor.x + spread * 8, y: anchor.y + (output ? -1 : 1) * height * .1 }
+            : { x: anchor.x + (output ? -1 : 1) * width * .11, y: anchor.y + spread * 10 };
+          const nearCenter = mobile
+            ? { x: center.x + (anchor.x - center.x) * .2 + spread * 12 + wave, y: center.y + (output ? 1 : -1) * height * .18 }
+            : { x: center.x + (output ? 1 : -1) * width * .18, y: center.y + (anchor.y - center.y) * .24 + spread * 16 + wave };
+          const [a, b, c, d] = output ? [end, nearCenter, nearAnchor, anchor] : [anchor, nearAnchor, nearCenter, end];
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.bezierCurveTo(b.x, b.y, c.x, c.y, d.x, d.y);
+          ctx.strokeStyle = `rgba(${color},${(strand === 3 ? .48 : .18) * alpha})`;
+          ctx.lineWidth = strand === 3 ? .95 : .65;
+          ctx.stroke();
 
-    // O canvas não herda fonte: a família é lida do DOM uma vez. Assim os
-    // rótulos do grafo acompanham a tipografia do site em vez de repetirem
-    // uma pilha escrita à mão que sairia de sincronia na próxima troca.
-    const FAMILIA = getComputedStyle(wrap).fontFamily || "system-ui, sans-serif";
+          // Tapered signals show the direction from source to document.
+          if (strand === 3 || strand === 1) {
+            const progress = (time * (.065 + index % 3 * .008) + index * .137 + strand * .31) % 1;
+            for (let tail = 0; tail < 10; tail++) {
+              const t = progress - tail * .009;
+              if (t < 0) continue;
+              const p = cubic(a, b, c, d, t);
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, tail === 0 ? 1.7 : .85, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(${color},${(1 - tail / 10) * .8 * Math.min(alpha, 1)})`;
+              ctx.fill();
+            }
+          }
+          if (strand === 3) {
+            [.27, .66].forEach((t) => {
+              const p = cubic(a, b, c, d, t);
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+              ctx.fillStyle = "#101d30";
+              ctx.fill();
+              ctx.strokeStyle = `rgba(${color},${.55 * Math.min(alpha, 1)})`;
+              ctx.stroke();
+            });
+          }
+        }
+      });
 
-    const nos: No[] = LAYOUT.map((n) => ({ ...n, glow: 0 }));
-    const iProcesso = nos.findIndex((n) => n.tipo === "processo");
-
-    // Toda fonte alimenta o processo; o processo produz a resposta.
-    const arestas: [number, number][] = nos
-      .map((n, i) =>
-        n.tipo === "fonte" ? ([i, iProcesso] as [number, number]) : null
-      )
-      .filter((e): e is [number, number] => e !== null);
-    nos.forEach((n, i) => {
-      if (n.tipo === "resposta") arestas.push([iProcesso, i]);
-    });
-    arestas.push([0, 1], [0, 3], [1, 2], [2, 4], [4, 5], [3, 5], [8, 9], [9, 7], [7, 10], [10, 11]);
-
-    // Fase inicial espalhada: sem isso todos os pulsos piscariam juntos e
-    // pareceriam um flash, não um fluxo.
-    const pulsos = arestas.map((_, i) => ({ t: (i / arestas.length) * 0.9 }));
-    // Progresso do desenho de entrada, por aresta.
-    const desenho: number[] = arestas.map(() => (reduzido ? 1 : 0));
-    let entrou = reduzido;
-    let frames = 0;
-
-    let w = 0;
-    let h = 0;
-    let dpr = 1;
-    const mouse = { x: -9999, y: -9999, dentro: false };
-    let raf = 0;
-    let visivel = true;
-    let tempo = 0;
-    let ultimoFrame = 0;
-
-    const medir = () => {
-      const r = wrap.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = r.width;
-      h = r.height;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
+      // Fine rings give the center a physical, engraved quality.
+      for (let ring = 0; ring < 4; ring++) {
+        ctx.beginPath();
+        ctx.ellipse(center.x, center.y, radius + 11 + ring * 9, radius + 11 + ring * 5, Math.sin(time * .12) * .2, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(167,197,156,${.2 - ring * .04})`;
+        ctx.lineWidth = .7;
+        ctx.stroke();
+      }
+      for (let i = 0; i < 64; i++) {
+        const angle = i / 64 * Math.PI * 2;
+        const r = radius + 23;
+        const length = i % 8 === 0 ? 5 : 2;
+        ctx.beginPath();
+        ctx.moveTo(center.x + Math.cos(angle) * r, center.y + Math.sin(angle) * r);
+        ctx.lineTo(center.x + Math.cos(angle) * (r + length), center.y + Math.sin(angle) * (r + length));
+        ctx.strokeStyle = "rgba(189,208,173,.28)";
+        ctx.stroke();
+      }
+    };
+    const tick = (now: number) => {
+      raf = 0;
+      time += last ? Math.min((now - last) / 1000, .05) : 0;
+      last = now;
+      draw();
+      if (visible && !document.hidden && !motion.matches && !pausedRef.current) raf = requestAnimationFrame(tick);
+    };
+    const sync = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      last = 0;
+      draw();
+      if (visible && !document.hidden && !motion.matches && !pausedRef.current) raf = requestAnimationFrame(tick);
+    };
+    redrawRef.current = sync;
+    const resize = new ResizeObserver(() => {
+      width = scene.clientWidth;
+      height = scene.clientHeight;
+      radius = (core?.offsetWidth ?? 144) / 2;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      if (bctx) {
-        brilho.width = Math.max(1, Math.round(w * ESCALA_BRILHO));
-        brilho.height = Math.max(1, Math.round(h * ESCALA_BRILHO));
-        bctx.setTransform(ESCALA_BRILHO, 0, 0, ESCALA_BRILHO, 0, 0);
-      }
-
-      // margem interna pra os rótulos não encostarem na borda
-      const mx = w < 520 ? 30 : 78;
-      const my = 34;
-      nos.forEach((n) => {
-        n.px = mx + n.x * (w - mx * 2);
-        n.py = my + n.y * (h - my * 2);
-      });
-    };
-
-    const raio = (n: No) =>
-      n.tipo === "processo" ? 12 : n.tipo === "resposta" ? 5 : 4;
-
-    /** Ponto de controle da curva: perpendicular ao meio, lado alternado. */
-    const controle = (A: No, B: No, i: number) => {
-      const ax = A.px!;
-      const ay = A.py!;
-      const bx = B.px!;
-      const by = B.py!;
-      const dx = bx - ax;
-      const dy = by - ay;
-      const comp = Math.hypot(dx, dy) || 1;
-      const lado = i % 2 === 0 ? 1 : -1;
-      const desloc = comp * CURVATURA * lado;
-      return {
-        ax,
-        ay,
-        bx,
-        by,
-        cx: (ax + bx) / 2 + (-dy / comp) * desloc,
-        cy: (ay + by) / 2 + (dx / comp) * desloc,
-      };
-    };
-
-    /** Traça a curva de 0 até `t`. Subdividir é exato o bastante e evita
-     *  ter que medir o comprimento do arco pra usar lineDash. */
-    const tracarAte = (
-      c: ReturnType<typeof controle>,
-      t: number,
-      alvo: CanvasRenderingContext2D
-    ) => {
-      const passos = 26;
-      alvo.beginPath();
-      alvo.moveTo(c.ax, c.ay);
-      for (let s = 1; s <= passos; s++) {
-        const p = pontoBezier(
-          c.ax,
-          c.ay,
-          c.cx,
-          c.cy,
-          c.bx,
-          c.by,
-          (s / passos) * t
-        );
-        alvo.lineTo(p.x, p.y);
-      }
-      alvo.stroke();
-    };
-
-    /** Desenha a cena. `luz` = só o que emite (vai pro canvas de brilho). */
-    const cena = (alvo: CanvasRenderingContext2D, luz: boolean) => {
-      arestas.forEach(([a, b], i) => {
-        const A = nos[a];
-        const B = nos[b];
-        if (A.px == null || B.px == null) return;
-        const t = desenho[i];
-        if (t <= 0.001) return;
-
-        const c = controle(A, B, i);
-        const aceso = Math.max(A.glow ?? 0, B.glow ?? 0);
-
-        // Na camada de luz a aresta entra só quando está acesa: linha
-        // parada não deve brilhar, senão o bloom vira névoa uniforme.
-        if (!luz || aceso > 0.02) {
-          alvo.strokeStyle = luz
-            ? `rgba(124,140,184,${aceso * 0.55})`
-            : `rgba(124,140,184,${0.16 + aceso * 0.5})`;
-          alvo.lineWidth = luz ? 1.6 + aceso : 1 + aceso * 0.6;
-          tracarAte(c, t, alvo);
-        }
-
-        if (!reduzido && t > 0.999) {
-          const p = pontoBezier(
-            c.ax,
-            c.ay,
-            c.cx,
-            c.cy,
-            c.bx,
-            c.by,
-            pulsos[i].t
-          );
-          const cor = B.tipo === "resposta" ? COR.resposta : COR.processo;
-          const r = luz ? 13 : 7;
-          const g = alvo.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-          g.addColorStop(0, cor);
-          g.addColorStop(1, "rgba(0,0,0,0)");
-          alvo.fillStyle = g;
-          alvo.globalAlpha = luz ? 0.85 : 0.6 + aceso * 0.4;
-          alvo.beginPath();
-          alvo.arc(p.x, p.y, r, 0, Math.PI * 2);
-          alvo.fill();
-          alvo.globalAlpha = 1;
-        }
-      });
-
-      nos.forEach((n) => {
-        if (n.px == null) return;
-        const cor = COR[n.tipo];
-        const r = raio(n);
-        const glow = n.glow ?? 0;
-
-        if (luz) {
-          // No canvas de brilho o nó é um disco maior e sólido: depois do
-          // blur ele vira o halo. Gradiente aqui só borraria duas vezes.
-          const intensidade =
-            n.tipo === "fonte" ? 0.25 + glow * 0.75 : 0.75 + glow * 0.25;
-          alvo.globalAlpha = intensidade;
-          alvo.fillStyle = cor;
-          alvo.beginPath();
-          alvo.arc(n.px, n.py!, r * 1.9, 0, Math.PI * 2);
-          alvo.fill();
-          alvo.globalAlpha = 1;
-          return;
-        }
-
-        alvo.beginPath();
-        alvo.arc(n.px, n.py!, r + glow * 2, 0, Math.PI * 2);
-        alvo.fillStyle = cor;
-        alvo.fill();
-
-        // Canvas estreito (celular) pede tipo menor: com 11px os rótulos
-        // se encostavam uns nos outros e o grafo virava sopa de letras.
-        const estreito = w < 520;
-        // Em telas pequenas os nomes continuam na lista HTML abaixo.
-        if (estreito && n.tipo !== "processo") return;
-        alvo.font =
-          n.tipo === "fonte"
-            ? `500 ${estreito ? 9.5 : 11}px ${FAMILIA}`
-            : `600 ${estreito ? 10.5 : 12.5}px ${FAMILIA}`;
-        alvo.fillStyle =
-          n.tipo === "fonte" ? `rgba(150,164,198,${0.6 + glow * 0.4})` : cor;
-        alvo.textBaseline = "middle";
-
-        // De que lado o rótulo cabe. Antes isto era um chute — "está
-        // passando de 72% da largura, joga pra esquerda" — e no celular o
-        // chute errava: "Resposta com fonte" caía do lado direito e saía
-        // pela borda. Agora a pergunta é medida, não estimada: o texto só
-        // fica à direita se couber inteiro ali.
-        const folga = r + 10;
-        const larguraTexto = alvo.measureText(n.label).width;
-        const BORDA = 6;
-        const cabeDireita = n.px + folga + larguraTexto <= w - BORDA;
-        const paraEsquerda = !cabeDireita && n.px - folga - larguraTexto >= BORDA;
-
-        alvo.textAlign = paraEsquerda ? "right" : "left";
-        let x = n.px + (paraEsquerda ? -folga : folga);
-        // Canvas curto demais pros dois lados: encosta no que sobrar em vez
-        // de deixar o rótulo sair da tela.
-        if (!cabeDireita && !paraEsquerda) {
-          alvo.textAlign = "left";
-          x = Math.max(BORDA, w - BORDA - larguraTexto);
-        }
-        if (n.tipo === "processo") {
-          alvo.textAlign = "center";
-          alvo.fillText(n.label, n.px, n.py! + 32);
-          alvo.strokeStyle = "rgba(138,203,82,0.25)";
-          alvo.lineWidth = 1;
-          alvo.beginPath();
-          alvo.arc(n.px, n.py!, 24, 0, Math.PI * 2);
-          alvo.stroke();
-        } else {
-          alvo.fillText(n.label, x, n.py!);
-        }
-      });
-    };
-
-    const desenhar = () => {
-      ctx.clearRect(0, 0, w, h);
-
-      if (temFiltro && bctx) {
-        bctx.clearRect(0, 0, w, h);
-        cena(bctx, true);
-
-        ctx.save();
-        // O blur é em px do canvas de destino; como o de brilho está em
-        // meia escala, ele é ampliado no drawImage e o borrão junto.
-        ctx.filter = `blur(${9}px)`;
-        ctx.globalCompositeOperation = "lighter";
-        ctx.drawImage(brilho, 0, 0, w, h);
-        // segunda passada, mais aberta e mais fraca: é o que dá o halo
-        // largo em volta dos nós fortes
-        ctx.filter = `blur(${26}px)`;
-        ctx.globalAlpha = 0.55;
-        ctx.drawImage(brilho, 0, 0, w, h);
-        ctx.restore();
-      }
-
-      cena(ctx, false);
-    };
-
-    const tick = (agora = 0) => {
-      raf = requestAnimationFrame(tick);
-      const delta = ultimoFrame ? Math.min((agora - ultimoFrame) / 1000, 0.05) : 0;
-      ultimoFrame = agora;
-      if (!visivel) return;
-      if (!reduzido) tempo += delta;
-
-      nos.forEach((n, i) => {
-        const margem = w < 520 ? 30 : 78;
-        const amplitude = reduzido || n.tipo === "processo" ? 0 : w < 520 ? 7 : 14;
-        n.px = margem + n.x * (w - margem * 2) + Math.sin(tempo * 0.35 + i * 1.7) * amplitude;
-        n.py = 34 + n.y * (h - 68) + Math.cos(tempo * 0.28 + i * 1.3) * amplitude;
-      });
-
-      // Desenho de entrada, escalonado. As arestas estão na ordem
-      // "fontes primeiro, processo → resposta por último", então um atraso
-      // proporcional ao índice já produz a direção certa do argumento.
-      if (!entrou) {
-        frames += 1;
-        let completo = true;
-        arestas.forEach((_, i) => {
-          const bruto = (frames - i * 9) / 42;
-          const t = Math.min(1, Math.max(0, bruto));
-          desenho[i] = 1 - Math.pow(1 - t, 3); // ease-out cúbica
-          if (t < 1) completo = false;
-        });
-        if (completo) entrou = true;
-      }
-
-      if (!reduzido) {
-        pulsos.forEach((p, i) => {
-          // velocidade um pouco diferente por aresta: o fluxo respira em
-          // vez de marchar em bloco
-          p.t += 0.0032 + (i % 3) * 0.0006;
-          if (p.t > 1) p.t = 0;
-        });
-      }
-
-      nos.forEach((n) => {
-        if (n.px == null) return;
-        let alvo = n.tipo === "fonte" ? 0 : 0.3;
-        if (mouse.dentro) {
-          const d = Math.hypot(mouse.x - n.px, mouse.y - n.py!);
-          if (d < 130) alvo = Math.max(alvo, 1 - d / 130);
-        }
-        n.glow = (n.glow ?? 0) + (alvo - (n.glow ?? 0)) * 0.12;
-      });
-
-      desenhar();
-    };
-
-    const onMove = (e: PointerEvent) => {
-      const r = wrap.getBoundingClientRect();
-      mouse.x = e.clientX - r.left;
-      mouse.y = e.clientY - r.top;
-      mouse.dentro = true;
-    };
-    const onLeave = () => {
-      mouse.dentro = false;
-    };
-
-    // Só anima em cena: canvas rodando fora de vista é bateria à toa.
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        visivel = entry.isIntersecting;
-      },
-      { threshold: 0 }
-    );
-    io.observe(wrap);
-
-    medir();
-    tick();
-    window.addEventListener("resize", medir);
-    wrap.addEventListener("pointermove", onMove);
-    wrap.addEventListener("pointerdown", onMove);
-    wrap.addEventListener("pointerleave", onLeave);
-
+      sync();
+    });
+    const intersection = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    resize.observe(scene);
+    intersection.observe(scene);
+    motion.addEventListener("change", sync);
+    narrow.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       cancelAnimationFrame(raf);
-      io.disconnect();
-      window.removeEventListener("resize", medir);
-      wrap.removeEventListener("pointermove", onMove);
-      wrap.removeEventListener("pointerdown", onMove);
-      wrap.removeEventListener("pointerleave", onLeave);
+      resize.disconnect();
+      intersection.disconnect();
+      motion.removeEventListener("change", sync);
+      narrow.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", sync);
+      redrawRef.current = null;
     };
   }, []);
 
   return (
-    <section
-      id="grafo"
-      aria-labelledby="grafo-title"
-      className="relative scroll-mt-28 px-6 pt-16 pb-16 md:px-10 md:pt-24 md:pb-24"
-    >
-      {/* fundo e orbes: MergulhoNavy */}
+    <section id="grafo" aria-labelledby="grafo-title" className="relative scroll-mt-28 px-6 pt-16 pb-16 md:px-10 md:pt-24 md:pb-24">
       <div className="relative mx-auto w-full max-w-[1180px]">
         <SectionEyebrow className="mb-9">{grafo.eyebrow}</SectionEyebrow>
-
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <Reveal>
-            <SectionTitle id="grafo-title" lines={grafo.titleLines} />
-          </Reveal>
-          <Reveal delay={0.08}>
-            <p className="max-w-[46ch] text-[15px] leading-relaxed text-muted">
-              {grafo.body}
-            </p>
-          </Reveal>
+          <Reveal><SectionTitle id="grafo-title" lines={grafo.titleLines} /></Reveal>
+          <Reveal delay={0.08}><p className="max-w-[46ch] text-[15px] leading-relaxed text-muted">{grafo.body}</p></Reveal>
         </div>
-
         <Reveal y={44} className="mt-14">
-          <div
-            ref={wrapRef}
-            className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/[0.07] bg-black/25 shadow-[inset_0_1px_0_rgba(255,255,255,.06)] md:h-[520px]"
-          >
-            <canvas ref={canvasRef} aria-hidden="true" className="block h-full w-full" />
+          <div className={styles.panel}>
+            <div className={styles.topbar}>
+              <span className={styles.kicker}>Da fonte à decisão</span>
+              <span className={styles.topHint}>Explore as conexões <ArrowUpRight size={13} aria-hidden="true" /></span>
+            </div>
+            <div ref={sceneRef} className={styles.scene} data-exploring={active !== null}>
+              <div className={styles.axis} aria-hidden="true"><span>01 / Fontes públicas</span><span>02 / Seu contexto</span><span>03 / Na prática</span></div>
+              <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
+              <div className={styles.core}><Fingerprint size={33} strokeWidth={1} aria-hidden="true" /><span>Seu processo</span><small>O ponto de conexão</small></div>
+              {NODES.map((node, index) => (
+                <button key={node.label} type="button" className={`${styles.node} ${node.kind === "output" ? styles.output : styles.source}`}
+                  style={{ "--x": `${node.x}%`, "--y": `${node.y}%`, "--mx": `${node.mx}%`, "--my": `${node.my}%` } as CSSProperties}
+                  data-active={active === index} aria-pressed={selected === index} aria-controls="grafo-detail"
+                  onPointerEnter={(event) => { if (event.pointerType === "mouse") setHovered(index); }} onPointerLeave={() => setHovered(null)}
+                  onFocus={() => setHovered(index)} onBlur={() => setHovered(null)}
+                  onClick={() => { setHovered(null); setSelected(selected === index ? null : index); }}
+                  onKeyDown={(event) => { if (event.key === "Escape") { setSelected(null); setHovered(null); } }}>
+                  <span className={styles.nodeMark} aria-hidden="true" /><span className={styles.nodeText}><strong>{node.label}</strong><small>{node.caption}</small></span>
+                </button>
+              ))}
+            </div>
+            <div className={styles.footer}>
+              <div id="grafo-detail" className={styles.detail} role="status" aria-live="polite" aria-atomic="true">
+                <span className={styles.detailMark} aria-hidden="true" />
+                <p><strong>{active === null ? "Conhecimento que se conecta." : NODES[active].label}</strong><span>{active === null ? "Explore uma fonte. Veja onde ela entra no seu processo." : NODES[active].detail}</span></p>
+              </div>
+              <button type="button" className={styles.motionButton} onClick={() => setPaused(!paused)} aria-label={paused ? "Retomar animação do grafo" : "Pausar animação do grafo"} aria-pressed={paused}>
+                {paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
+              </button>
+            </div>
           </div>
         </Reveal>
-
-        {/* Lista textual dos nós: o canvas é opaco pra leitor de tela, então
-            a informação precisa existir em HTML. */}
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-          <ul className="flex flex-wrap gap-x-4 gap-y-2">
-            {grafo.nos.map((n) => (
-              <li key={n} className="data text-[11px] text-faint">
-                {n}
-              </li>
-            ))}
-          </ul>
-          <p className="data text-[11px] text-faint">{grafo.rodape}</p>
-        </div>
+        <div className={styles.caption}><span>Fontes públicas. Contexto conectado. Decisões fundamentadas.</span><span>{grafo.rodape}</span></div>
       </div>
     </section>
   );
