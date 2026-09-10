@@ -25,6 +25,12 @@ export default function QuemSection() {
     () => {
       const el = root.current?.querySelector<HTMLElement>(".qs-num");
       if (!el) return;
+
+      // A contagem também respeita a preferência por menos movimento. Ela
+      // ficava de fora: o aro parava, o número continuava correndo, e o
+      // mesmo dado se comportava de dois jeitos na mesma caixa.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
       const obj = { v: 0 };
       gsap.to(obj, {
         v: Number(quem.destaque.valor),
@@ -35,10 +41,15 @@ export default function QuemSection() {
           el.textContent = String(Math.round(obj.v));
         },
       });
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        gsap.fromTo(".qs-clock-hand", { rotation: 0 }, {
-          rotation: 288,
-          svgOrigin: "50 50",
+
+      {
+        // O aro se fecha no MESMO compasso do número (expo.out, 1.8s):
+        // são a mesma informação dita de dois jeitos, então precisam
+        // chegar juntos. Com `pathLength=100` o traço é medido em
+        // porcentagem, e o destino é literalmente o valor — sem constante
+        // de circunferência pra recalcular se o raio mudar.
+        gsap.fromTo(".qs-aro", { strokeDashoffset: 100 }, {
+          strokeDashoffset: 100 - Number(quem.destaque.valor),
           duration: 1.8,
           ease: "expo.out",
           scrollTrigger: { trigger: ".qs-destaque", start: "top 80%", once: true },
@@ -76,22 +87,53 @@ export default function QuemSection() {
 
           <Reveal y={40}>
             <div className="qs-destaque flex h-full flex-col justify-center rounded-3xl border border-line bg-paper-2 p-9 md:p-11">
-              <div className="flex items-start">
-                <span className="qs-num data text-[clamp(4.5rem,11vw,8.5rem)] leading-[0.85] font-semibold text-fg">
-                  {quem.destaque.valor}
+              {/* O "%" cola no número. Antes o relógio vinha entre os dois
+                  com ml-auto, e "80" e "%" acabavam separados pela largura
+                  do card — deixavam de ler como uma grandeza só. */}
+              <div className="flex items-start justify-between gap-6">
+                <span className="flex items-start">
+                  <span className="qs-num data text-[clamp(4.5rem,11vw,8.5rem)] leading-[0.85] font-semibold text-fg">
+                    {quem.destaque.valor}
+                  </span>
+                  <span className="data mt-2 text-[clamp(1.6rem,3vw,2.4rem)] leading-none font-medium text-blue">
+                    {quem.destaque.sufixo}
+                  </span>
                 </span>
-                <svg aria-hidden="true" viewBox="0 0 100 100" className="ml-auto h-20 w-20 shrink-0 text-blue/45 sm:h-24 sm:w-24">
-                  <circle cx="50" cy="50" r="43" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                  {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle) => (
-                    <path key={angle} d="M50 12v5" stroke="currentColor" strokeWidth="1.5" transform={`rotate(${angle} 50 50)`} />
-                  ))}
-                  <path className="qs-clock-hand" d="M50 50V25" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <path d="M50 50L67 59" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <circle cx="50" cy="50" r="3" fill="currentColor" />
+
+                {/* Aro no lugar do mostrador de relógio. O relógio desenhado
+                    era decoração: um ponteiro girando 288° não dizia nada
+                    que o número já não dissesse, e ainda pedia leitura de
+                    hora onde não há hora. O aro mostra os 80% de verdade —
+                    é o mesmo dado, medido. -rotate-90 põe o começo do traço
+                    às 12h; sem isso ele partiria das 3h. */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 100 100"
+                  className="mt-1 h-20 w-20 shrink-0 -rotate-90 sm:h-24 sm:w-24"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="44"
+                    fill="none"
+                    strokeWidth="7"
+                    stroke="currentColor"
+                    className="text-blue/12"
+                  />
+                  <circle
+                    className="qs-aro text-blue"
+                    cx="50"
+                    cy="50"
+                    r="44"
+                    fill="none"
+                    strokeWidth="7"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    pathLength={100}
+                    strokeDasharray="100"
+                    strokeDashoffset={100 - Number(quem.destaque.valor)}
+                  />
                 </svg>
-                <span className="data mt-2 text-[clamp(1.6rem,3vw,2.4rem)] leading-none font-medium text-blue">
-                  {quem.destaque.sufixo}
-                </span>
               </div>
               <p className="mt-8 max-w-[30ch] text-[15.5px] leading-relaxed text-muted">
                 {quem.destaque.desc}

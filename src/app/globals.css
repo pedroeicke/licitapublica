@@ -114,7 +114,6 @@
 
   --font-display: var(--font-archivo), system-ui, sans-serif;
   --font-sans: var(--font-jakarta), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
   --font-brand: var(--font-montserrat), system-ui, sans-serif;
 
   --text-mega: clamp(2.1rem, 3.8vw, 3.6rem);
@@ -178,13 +177,25 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* DADO — número de processo, valor, artigo de lei, rótulo de painel.
+   
+   ERA MONO (IBM Plex Mono), com "zero" 1 ligado — que é justamente o
+   recurso que desenha o zero cortado. Sai por dois motivos que o cliente
+   apontou: o desenho de máquina de escrever destoa da marca, e o zero
+   riscado não combina com nada no site.
+
+   O que a mono resolvia de verdade era ALINHAMENTO: número embaixo de
+   número em coluna. `tabular-nums` entrega isso na fonte do corpo — todos
+   os algarismos com a mesma largura, sem herdar a aparência técnica. O
+   pequeno tracking devolve o ar entre glifos que a mono dava de graça. */
 .data {
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-feature-settings: "zero" 1;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.015em;
 }
 
 .eyebrow {
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.24em;
@@ -478,7 +489,7 @@ body {
 .reg-marks::after {
   content: "+";
   position: absolute;
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   font-size: 13px;
   line-height: 1;
   color: var(--lp-faint);

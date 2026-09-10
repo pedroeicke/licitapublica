@@ -69,7 +69,23 @@ const CORES_LINHA = [
 // da lista, o que quebrava assim que dois itens tinham o mesmo nível.
 const BARRAS: Record<string, number> = { Alta: 3, Média: 2, Baixa: 1 };
 
-/** Moldura comum das demonstrações: sangra pela direita e pela base. */
+/** Moldura comum das demonstrações: sangra pela direita e pela base.
+ *
+ *  O `pr` grande não é enfeite. O painel avança 20px além da borda do
+ *  card, e o card tem overflow-hidden — a ideia era o recorte comer a
+ *  MOLDURA, pra ler como "isto continua". Com padding simétrico ele comia
+ *  o conteúdo junto: os chips de criticidade, alinhados à direita,
+ *  encostavam na linha de corte e saíam pela metade.
+ *
+ *  Agora o conteúdo para 56px antes da borda do painel: 20 caem fora do
+ *  card e sobram 36 de respiro visível, próximo dos 40 que o conteúdo tem
+ *  do lado esquerdo. A referência de simetria é a borda do CARD, que é o
+ *  que se vê — não a do painel, que é cortada.
+ *
+ *  O `pb` grande resolve a mesma coisa embaixo. A última linha terminava
+ *  a −3, +1 e +8px do corte nos três cards: perto demais pra ler como
+ *  respiro e longe demais de meio a meio pra ler como "continua" — lia
+ *  como erro. Com 40px de fundo, o corte volta a comer padding. */
 function Painel({
   titulo,
   children,
@@ -78,7 +94,7 @@ function Painel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="absolute top-6 -right-5 left-6 rounded-xl border border-line bg-white p-4 shadow-[0_18px_40px_-26px_rgba(13,20,60,0.4)]">
+    <div className="absolute top-6 -right-5 left-6 rounded-xl border border-line bg-white p-4 pr-14 pb-10 shadow-[0_18px_40px_-26px_rgba(13,20,60,0.4)]">
       <p className="data text-[9.5px] tracking-[0.16em] text-faint uppercase">
         {titulo}
       </p>
@@ -243,7 +259,11 @@ export default function GovernancaSection() {
                       mais curto: as três demonstrações ficam alinhadas
                       entre si, que é o que faz a fileira ler como uma peça
                       só em vez de três cards independentes. */}
-                  <div className="relative mt-auto h-[186px] overflow-hidden border-t border-line bg-paper-2/70">
+                  {/* 212px: acima dos 189 onde termina a última linha do
+                      card mais cheio (23px de respiro) e abaixo dos 219 em
+                      que o painel mais curto termina — então os três
+                      continuam cortados e a sangria não se perde. */}
+                  <div className="relative mt-auto h-[212px] overflow-hidden border-t border-line bg-paper-2/70">
                     <Visual linha={l} />
                   </div>
                 </GlowCard>

@@ -1,9 +1,4 @@
-import {
-  Archivo,
-  IBM_Plex_Mono,
-  Montserrat,
-  Plus_Jakarta_Sans,
-} from "next/font/google";
+import { Archivo, Montserrat, Plus_Jakarta_Sans } from "next/font/google";
 
 // ============================================================
 // SISTEMA TIPOGRÁFICO
@@ -40,14 +35,10 @@ export const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-// DADO / CITAÇÃO LEGAL — IBM Plex Mono. Artigo de lei, número de processo,
-// valor de cotação. O leitor reconhece "isto é verificável", não copy.
-export const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
+// NÃO HÁ MONO. O papel de "dado" (artigo de lei, número de processo, valor)
+// era da IBM Plex Mono e passou pra Jakarta com tabular-nums — ver .data em
+// globals.css. Uma fonte a menos pra baixar, e o site fica em duas famílias:
+// Archivo no display, Jakarta em todo o resto.
 
 // MARCA — Montserrat 700 itálica, um peso só. Usada exclusivamente no
 // wordmark, que é o lockup real do cliente. Fora dele, nada de Montserrat.

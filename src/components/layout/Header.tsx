@@ -106,7 +106,7 @@ export default function Header() {
         className={cn(
           "fixed inset-x-0 top-3.5 z-[60] mx-auto w-fit transition-[background,border-color,box-shadow] duration-500",
           "flex max-w-[94vw] items-center gap-1 rounded-full border py-1.5 pr-1.5 pl-3 md:py-2.5 md:pr-2.5 md:pl-4",
-          "border-white/25 bg-navy/70 backdrop-blur-2xl backdrop-saturate-150",
+          "border-white/25 bg-navy/58 backdrop-blur-2xl backdrop-saturate-150",
           scrolled
             ? "shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_20px_50px_-18px_rgba(13,20,60,.55)]"
             : "shadow-[inset_0_1px_0_rgba(255,255,255,.1),0_10px_30px_-16px_rgba(13,20,60,.4)]",
@@ -115,7 +115,7 @@ export default function Header() {
         <a
           href="#topo"
           className="shrink-0 pr-2 text-white"
-          aria-label="Licita Pública — início"
+          aria-label="Licita Pública, início"
         >
           <Wordmark variante="branca" className="h-[18px] md:h-6" />
         </a>

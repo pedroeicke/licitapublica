@@ -10,7 +10,7 @@
 
 export const pt = {
   meta: {
-    title: "Licita Pública — a inteligência artificial das Contratações Públicas",
+    title: "Licita Pública · a inteligência artificial das Contratações Públicas",
     description:
       "Minutas de DFD, ETP, TR, Edital e Contratos geradas por IA, com pesquisa de preços no rito da IN nº 65/2021 e respostas com fonte citada. Uma solução do Grupo Plenum Brasil.",
   },
@@ -25,6 +25,7 @@ export const pt = {
       { href: "#consultor", label: "Consultor" },
       { href: "#para-quem", label: "Para quem" },
       { href: "#seguranca", label: "Segurança" },
+      { href: "#quem", label: "Quem somos" },
     ],
     cta: "Demonstração",
     // Login da plataforma. O produto e o site institucional dividem o mesmo
@@ -38,7 +39,7 @@ export const pt = {
     // peso — não por navy/verde/ouro na mesma frase.
     titleLines: ["A inteligência artificial", "das Contratações Públicas."],
     // Duas linhas. O briefing completo foi pra tese e pras seções.
-    sub: "Uma conversa guiada gera as minutas da fase interna — contextualizadas, editáveis e juridicamente seguras.",
+    sub: "Uma conversa guiada gera as minutas da fase interna: contextualizadas, editáveis e juridicamente seguras.",
     ctaPrimary: "Agendar demonstração",
     ctaGhost: "Conhecer o ciclo",
     // Só números aqui. "Plenum Brasil" era o terceiro item no original,
@@ -106,7 +107,7 @@ export const pt = {
         n: "01",
         title: "Planejamento",
         ref: "Plano de Contratações Anual",
-        desc: "Toda contratação começa com uma necessidade. A entrevista guiada registra o que o órgão precisa e por quê, já vinculado ao PCA.",
+        desc: "Toda contratação começa com uma necessidade. A entrevista guiada registra o que o Órgão precisa e por quê, já vinculado ao PCA.",
       },
       {
         n: "02",
@@ -141,19 +142,19 @@ export const pt = {
       {
         n: "07",
         title: "Edital",
-        ref: "fase externa",
+        ref: "Fase Externa",
         desc: "Minuta de edital e avisos de contratação no padrão oficial, coerentes com o TR e com a pesquisa de preços.",
       },
       {
         n: "08",
         title: "Contrato",
-        ref: "instrumento",
+        ref: "Instrumento",
         desc: "Minutas de contrato e ata de registro de preços, com vigência, aditivos e medições sob controle desde a assinatura.",
       },
       {
         n: "09",
         title: "Fiscalização",
-        ref: "prestação de contas",
+        ref: "Prestação de Contas",
         desc: "Painel do fiscal com checklist, trilha de auditoria e o histórico completo que o controle externo vai pedir.",
       },
     ],
@@ -163,7 +164,7 @@ export const pt = {
   telas: {
     eyebrow: "Produto real",
     titleLines: ["Menos erros.", "Contratações mais ágeis."],
-    body: "Pesquisa, elaboração, análise e consultas no mesmo ambiente. Navegue pelas telas — o fluxo acontece de maneira didática e aprofundada.",
+    body: "Pesquisa, elaboração, análise e consultas no mesmo ambiente. Navegue pelas telas. O fluxo acontece de maneira didática e aprofundada.",
     instrucao: "Selecione uma funcionalidade para conhecer os recursos.",
     abas: [
       {
@@ -196,7 +197,7 @@ export const pt = {
         id: "especialista",
         label: "Especialista",
         title: "Resposta com a fonte citada",
-        desc: "Lei, decretos e acórdãos do TCU e dos TCEs — sempre com o dispositivo verificado junto.",
+        desc: "Lei, decretos e acórdãos do TCU e dos TCEs, sempre com o dispositivo verificado junto.",
         chips: ["Lei 14.133", "Decretos", "TCU · TCEs", "Fonte citada"],
       },
     ],
@@ -260,7 +261,7 @@ export const pt = {
   grafo: {
     eyebrow: "O grafo de dados",
     titleLines: ["Os dados públicos, ligados.", "As respostas, com fonte."],
-    body: "Lei, decretos, acórdãos do TCU e dos TCEs, preços do PNCP, SINAPI e BPS — num grafo único e atualizado diariamente. Passe o mouse ou toque: a constelação responde.",
+    body: "Lei, decretos, acórdãos do TCU e dos TCEs, preços do PNCP, SINAPI e BPS, tudo num grafo único e atualizado diariamente. Passe o mouse ou toque: a constelação responde.",
     nos: [
       "Lei 14.133",
       "Decretos",
@@ -381,7 +382,7 @@ export const pt = {
   seguranca: {
     eyebrow: "Segurança e privacidade",
     titleLines: ["Confiança que a Administração", "Pública exige."],
-    body: "Licitação envolve dados sensíveis, sigilo legal e responsabilidade institucional. Construímos a Licita Pública desde o primeiro byte para honrar esse padrão — com infraestrutura, governança e práticas auditáveis.",
+    body: "Licitação envolve dados sensíveis, sigilo legal e responsabilidade institucional. Construímos a Licita Pública desde o primeiro byte para honrar esse padrão, com infraestrutura, governança e práticas auditáveis.",
     selos: [
       "Adequação à LGPD",
       "Sigilo legal da fase preparatória preservado",
@@ -397,8 +398,8 @@ export const pt = {
         desc: "Informações sensíveis preservadas com práticas de proteção em padrões de mercado, tanto no tráfego quanto no armazenamento.",
       },
       {
-        title: "Ambiente dedicado por órgão",
-        desc: "Cada órgão opera em ambiente próprio e isolado. Os dados de um cliente jamais são visíveis a outro.",
+        title: "Ambiente dedicado por Órgão",
+        desc: "Cada Órgão opera em ambiente próprio e isolado. Os dados de um cliente jamais são visíveis a outro.",
       },
       {
         title: "Sigilo da fase preparatória",
@@ -406,7 +407,7 @@ export const pt = {
       },
       {
         title: "Rastreabilidade auditável",
-        desc: "Cada ação relevante fica registrada com data, autor e contexto, permitindo prestação de contas a órgãos de controle.",
+        desc: "Cada ação relevante fica registrada com data, autor e contexto, permitindo prestação de contas a Órgãos de controle.",
       },
       {
         title: "Continuidade e resiliência",
@@ -469,7 +470,7 @@ export const pt = {
   },
 
   quem: {
-    eyebrow: "Quem está por trás",
+    eyebrow: "Quem somos",
     titleLines: ["Feita por quem ensina", "Gestão Pública há uma década."],
     body: "A Licita Pública é uma solução do Grupo Plenum Brasil, que capacitou mais de 30 mil gestores públicos em 10 anos. O conhecimento que virou apostila agora escreve documento, confere conformidade e responde dúvida dentro da plataforma.",
     nota: "Nada de depoimento inventado nem número inflado: o que mostramos é o produto real.",
@@ -484,7 +485,7 @@ export const pt = {
   demo: {
     eyebrow: "Demonstração",
     titleLines: ["Veja com o seu processo,", "não com o nosso exemplo."],
-    body: "Na demonstração, a gente monta um processo do seu órgão do início ao fim: da entrevista do DFD ao relatório de pesquisa de preços. Traga um caso real e saia com ele encaminhado.",
+    body: "Na demonstração, a gente monta um processo do seu Órgão do início ao fim: da entrevista do DFD ao relatório de pesquisa de preços. Traga um caso real e saia com ele encaminhado.",
     // Ordem pensada pro grid de 2 colunas: nome|órgão, cargo|whatsapp,
     // e-mail (linha inteira). Sem campo órfão sobrando numa linha.
     campos: [
@@ -514,12 +515,12 @@ export const pt = {
     titleLines: ["O que o setor de compras", "vai perguntar."],
     itens: [
       {
-        q: "Como um órgão público contrata a plataforma?",
+        q: "Como um Órgão público contrata a plataforma?",
         a: "Depende do enquadramento: dispensa por valor, adesão ou processo próprio. A equipe comercial entrega a documentação para instruir o processo, incluindo proposta formal e comprovações da empresa.",
       },
       {
         q: "E o sigilo da fase preparatória?",
-        a: "O art. 13 da Lei nº 14.133/2021 protege a fase preparatória: cada órgão opera em ambiente isolado, o conteúdo dos processos não entra em registro de atividade e nem a equipe da plataforma acessa os dados do cliente.",
+        a: "O art. 13 da Lei nº 14.133/2021 protege a fase preparatória: cada Órgão opera em ambiente isolado, o conteúdo dos processos não entra em registro de atividade e nem a equipe da plataforma acessa os dados do cliente.",
       },
       {
         q: "A IA pode inventar uma lei ou um julgamento?",
@@ -527,7 +528,7 @@ export const pt = {
       },
       {
         q: "Quais documentos saem prontos?",
-        a: "DFD, ETP (completo ou simplificado), Termo de Referência, minutas de edital e contrato, parecer jurídico e ata de registro de preços — em DOCX no padrão oficial.",
+        a: "DFD, ETP (completo ou simplificado), Termo de Referência, minutas de edital e contrato, parecer jurídico e ata de registro de preços, em DOCX no padrão oficial.",
       },
       {
         q: "Preciso trocar os sistemas que já uso?",
@@ -535,7 +536,7 @@ export const pt = {
       },
       {
         q: "Quanto custa?",
-        a: "Os pacotes (Básico, Completo e Pro) variam com o porte do órgão e os módulos. Peça a demonstração e a proposta chega junto, em até 1 dia útil.",
+        a: "Os pacotes (Básico, Completo e Pro) variam com o porte do Órgão e os módulos. Peça a demonstração e a proposta chega junto, em até 1 dia útil.",
       },
     ],
   },

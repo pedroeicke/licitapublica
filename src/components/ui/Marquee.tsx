@@ -28,9 +28,17 @@ export default function Marquee({
   duration?: number;
   className?: string;
 }) {
+  // O track duplica o bloco e translada -50%, então cada metade precisa ser
+  // MAIS LARGA que a tela — senão o fim da segunda cópia aparece antes de a
+  // primeira voltar, e o loop abre um buraco. Com duas frases curtas era
+  // exatamente o que acontecia. Repetir a lista até somar ~8 trechos cobre
+  // as larguras que o site encontra, sem medir nada em runtime.
+  const repeticoes = Math.max(1, Math.ceil(8 / Math.max(itens.length, 1)));
+  const sequencia = Array.from({ length: repeticoes }, () => itens).flat();
+
   const bloco = (
     <div className="flex shrink-0 items-center" aria-hidden={undefined}>
-      {itens.map((t, i) => (
+      {sequencia.map((t, i) => (
         <span key={i} className="flex shrink-0 items-center">
           <span className="data px-7 text-[11px] tracking-[0.2em] whitespace-nowrap uppercase">
             {t}

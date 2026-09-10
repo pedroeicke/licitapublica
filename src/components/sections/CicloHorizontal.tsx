@@ -53,7 +53,11 @@ export default function CicloHorizontal() {
           // mais não deixam o scroll mais apertado, só mais longo.
           end: () => `+=${distancia()}`,
           pin: true,
-          scrub: 0.7,
+          // 0.4, não 0.7. O Lenis já amortece o scroll (lerp 0.1) e o
+          // scrub amortece de novo: dois amortecimentos empilhados fazem o
+          // trilho perseguir o dedo com atraso, o que se sente como
+          // engasgo mesmo quando a taxa de quadros está inteira.
+          scrub: 0.4,
           invalidateOnRefresh: true,
           // onUpdate roda a cada frame do scrub: setState direto aqui
           // re-renderizaria os nove cards ~60×/s. O React descarta um
@@ -132,10 +136,17 @@ export default function CicloHorizontal() {
                 key={e.n}
                 as="article"
                 className={cn(
-                  "group flex min-h-[300px] w-[80vw] shrink-0 flex-col justify-between p-6 transition-[transform,opacity,filter,box-shadow] duration-500 motion-reduce:transition-none sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
-                  // 0.5px praticamente não se via — o cartão lateral só
+                  "group flex min-h-[300px] w-[80vw] shrink-0 transform-gpu flex-col justify-between p-6 transition-[transform,opacity] duration-500 motion-reduce:transition-none sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
+                  // 0.5px praticamente não se via: o cartão lateral só
                   // parecia menor. Em 2px o desfoque vira o que ele deveria
-                  // ser: profundidade de campo, com o do meio em foco.
+                  // ser, profundidade de campo com o do meio em foco.
+                  //
+                  // `transform-gpu` não é enfeite: um elemento com
+                  // filter:blur() que é transladado todo quadro (o trilho
+                  // inteiro anda no scrub) pode ser re-rasterizado a cada
+                  // quadro. Promovido a camada própria, o blur é rasterizado
+                  // UMA vez e o que muda depois é só a matriz — que a GPU
+                  // resolve de graça. Era o suspeito nº 1 do engasgo.
                   i === ativo
                     ? "card-on -translate-y-2 scale-100 opacity-100 blur-0"
                     : "scale-[0.94] opacity-60 blur-[2px]",
@@ -158,10 +169,18 @@ export default function CicloHorizontal() {
                 </div>
 
                 {/* conector: sugere que o card seguinte herda deste */}
+                {/* O conector dizia "contexto conectado" nos nove cartões:
+                    uma etiqueta repetida que não informava nada. Agora ele
+                    NOMEIA o destino — que é a própria promessa da seção
+                    ("cada etapa herda o contexto da anterior") dita de forma
+                    concreta, e sai de dado que já existe: o título da etapa
+                    seguinte. Nada inventado. */}
                 <div className="mt-6 flex items-center gap-2 text-faint sm:mt-7">
                   <span className="h-px w-full bg-line" />
                   <span className="data shrink-0 text-[10px] tracking-[0.18em] uppercase">
-                    contexto conectado
+                    {ciclo.etapas[i + 1]
+                      ? `alimenta ${ciclo.etapas[i + 1].title}`
+                      : "encerra o ciclo"}
                   </span>
                 </div>
               </GlowCard>

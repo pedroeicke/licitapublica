@@ -127,6 +127,11 @@ export default function GrafoSection() {
     const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)")
       .matches;
 
+    // O canvas não herda fonte: a família é lida do DOM uma vez. Assim os
+    // rótulos do grafo acompanham a tipografia do site em vez de repetirem
+    // uma pilha escrita à mão que sairia de sincronia na próxima troca.
+    const FAMILIA = getComputedStyle(wrap).fontFamily || "system-ui, sans-serif";
+
     const nos: No[] = LAYOUT.map((n) => ({ ...n, glow: 0 }));
     const iProcesso = nos.findIndex((n) => n.tipo === "processo");
 
@@ -311,8 +316,8 @@ export default function GrafoSection() {
         if (estreito && n.tipo !== "processo") return;
         alvo.font =
           n.tipo === "fonte"
-            ? `500 ${estreito ? 9.5 : 11}px ui-monospace, monospace`
-            : `600 ${estreito ? 10.5 : 12.5}px ui-monospace, monospace`;
+            ? `500 ${estreito ? 9.5 : 11}px ${FAMILIA}`
+            : `600 ${estreito ? 10.5 : 12.5}px ${FAMILIA}`;
         alvo.fillStyle =
           n.tipo === "fonte" ? `rgba(150,164,198,${0.6 + glow * 0.4})` : cor;
         alvo.textBaseline = "middle";

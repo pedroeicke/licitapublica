@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { archivo, jakarta, plexMono, montserrat } from "./fonts";
+import { archivo, jakarta, montserrat } from "./fonts";
 import { content, locale } from "@/content";
 import SmoothScroll from "@/components/SmoothScroll";
 import Header from "@/components/layout/Header";
@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${archivo.variable} ${jakarta.variable} ${plexMono.variable} ${montserrat.variable} h-full`}
+      className={`${archivo.variable} ${jakarta.variable} ${montserrat.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="min-h-full" suppressHydrationWarning>
