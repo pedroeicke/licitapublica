@@ -536,3 +536,78 @@ html.lenis body {
     animation: none !important;
   }
 }
+
+/* ------------------------------------------------------------
+   BRILHO DA MARCA — a luz que atravessa o lockup.
+
+   Mascarado pelo próprio SVG da logo (o alfa do arquivo), senão a faixa
+   varreria o retângulo inteiro e, sobre a pill navy do header, leria como
+   um reflexo no fundo em vez de na marca.
+
+   O gradiente não se move: quem anda é o background-position. Isso mantém
+   tudo em composição, sem layout nem paint por frame. A pausa longa no fim
+   do keyframe é de propósito — brilho contínuo vira pisca-pisca.
+   ------------------------------------------------------------ */
+.marca-brilho {
+  position: relative;
+  display: inline-block;
+}
+.marca-brilho::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    100deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.9) 50%,
+    transparent 58%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  -webkit-mask-image: var(--marca-mask);
+  mask-image: var(--marca-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  animation: lp-brilho-marca 6s ease-in-out infinite;
+}
+@keyframes lp-brilho-marca {
+  0% {
+    background-position: 210% 0;
+  }
+  38%,
+  100% {
+    background-position: -110% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marca-brilho::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Cursor da pergunta digitada no Consultor. O GSAP apaga com autoAlpha ao
+   fim da digitação — visibility:hidden vence a animação, então não precisa
+   parar o keyframe. */
+.cs-cursor {
+  animation: lp-cursor 1s steps(2, start) infinite;
+}
+@keyframes lp-cursor {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-cursor {
+    animation: none;
+  }
+}

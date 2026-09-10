@@ -262,8 +262,8 @@ export default function Hero() {
       {/* ---------- MANCHETE ---------- */}
       <div className="relative z-10 flex flex-1 items-center pt-24 pb-10 md:pb-[224px]">
         <div className="h-text mx-auto w-full max-w-[1240px] px-6 text-center md:px-10">
-          <p className="h-eyebrow eyebrow inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-3 py-1.5 text-blue backdrop-blur-sm sm:gap-2.5 sm:px-3.5 sm:py-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue" />
+          <p className="h-eyebrow eyebrow inline-flex items-center gap-3 text-blue">
+            <span aria-hidden="true" className="h-px w-7 bg-blue/50" />
             {hero.eyebrow}
           </p>
 

@@ -54,13 +54,13 @@ export default function SegurancaSection() {
 
         {/* selos de conformidade — verde é o "ok" */}
         <StaggerReveal
-          className="mt-10 flex flex-wrap gap-2.5"
+          className="mt-10 grid gap-3 md:grid-cols-3"
           stagger={0.06}
         >
           {seguranca.selos.map((s) => (
             <span
               key={s}
-              className="inline-flex items-center gap-2 rounded-full border border-leaf/30 bg-leaf/[0.08] px-3.5 py-2 text-[12.5px] text-fg"
+              className="flex h-full items-center justify-center gap-2 rounded-full border border-leaf/30 bg-leaf/[0.08] px-3.5 py-2 text-center text-[12.5px] text-fg"
             >
               <Check className="h-3.5 w-3.5 shrink-0 text-leaf" strokeWidth={3} />
               {s}

@@ -32,16 +32,23 @@ export default function Wordmark({
   const src = variante === "branca" ? "/logo-branca.svg" : "/logo.svg";
 
   return (
-    <Image
-      src={src}
-      alt="Licita Pública"
-      width={Math.round((altura * 686) / 239)}
-      height={altura}
-      priority
-      // A altura sai de uma CLASSE, não de style inline: inline venceria
-      // qualquer utilitário responsivo e a logo não poderia encolher no
-      // celular. Quem passa className manda; sem ela, vale a padrão.
-      className={cn("w-auto", className ?? "h-6")}
-    />
+    <span
+      className="marca-brilho align-middle"
+      // O mesmo arquivo serve de máscara pro brilho: a luz só acende onde
+      // há tinta, em vez de varrer o retângulo inteiro da imagem.
+      style={{ "--marca-mask": `url(${src})` } as React.CSSProperties}
+    >
+      <Image
+        src={src}
+        alt="Licita Pública"
+        width={Math.round((altura * 686) / 239)}
+        height={altura}
+        priority
+        // A altura sai de uma CLASSE, não de style inline: inline venceria
+        // qualquer utilitário responsivo e a logo não poderia encolher no
+        // celular. Quem passa className manda; sem ela, vale a padrão.
+        className={cn("block w-auto", className ?? "h-6")}
+      />
+    </span>
   );
 }

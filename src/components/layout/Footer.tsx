@@ -2,7 +2,7 @@ import { content } from "@/content";
 import Wordmark from "@/components/ui/Wordmark";
 
 export default function Footer() {
-  const { footer, ciclo } = content;
+  const { footer } = content;
 
   return (
     <footer className="dive-navy relative px-6 py-16 md:px-10">
@@ -21,20 +21,6 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* As 9 etapas como índice de rodapé: fecha o site repetindo o
-              esqueleto do produto, e dá âncora de SEO pros termos legais. */}
-          <div className="md:max-w-xl">
-            <p className="eyebrow text-faint">As 9 etapas</p>
-            <ol className="mt-4 grid grid-cols-1 gap-x-8 gap-y-1.5 sm:grid-cols-2">
-              {ciclo.etapas.map((e) => (
-                <li key={e.n} className="text-sm text-muted">
-                  <span className="data text-faint">{e.n}</span>{" "}
-                  <span className="text-fg/80">{e.title}</span>{" "}
-                  <span className="data text-xs text-faint">({e.ref})</span>
-                </li>
-              ))}
-            </ol>
-          </div>
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-line pt-6 md:flex-row md:items-center md:justify-between">

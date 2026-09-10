@@ -53,14 +53,18 @@ type No = {
 };
 
 const LAYOUT: No[] = [
-  { label: "Lei 14.133", x: 0.09, y: 0.16, tipo: "fonte" },
-  { label: "Decretos", x: 0.06, y: 0.44, tipo: "fonte" },
-  { label: "TCU · TCEs", x: 0.11, y: 0.74, tipo: "fonte" },
-  { label: "PNCP", x: 0.3, y: 0.09, tipo: "fonte" },
-  { label: "SINAPI", x: 0.26, y: 0.9, tipo: "fonte" },
-  { label: "BPS", x: 0.4, y: 0.62, tipo: "fonte" },
-  { label: "Seu processo", x: 0.55, y: 0.36, tipo: "processo" },
-  { label: "Resposta com fonte", x: 0.85, y: 0.55, tipo: "resposta" },
+  { label: "Lei 14.133", x: 0.10, y: 0.18, tipo: "fonte" },
+  { label: "Decretos", x: 0.04, y: 0.48, tipo: "fonte" },
+  { label: "TCU · TCEs", x: 0.10, y: 0.78, tipo: "fonte" },
+  { label: "PNCP", x: 0.34, y: 0.10, tipo: "fonte" },
+  { label: "SINAPI", x: 0.30, y: 0.9, tipo: "fonte" },
+  { label: "BPS", x: 0.29, y: 0.59, tipo: "fonte" },
+  { label: "Seu processo", x: 0.50, y: 0.48, tipo: "processo" },
+  { label: "Resposta com fonte", x: 0.80, y: 0.48, tipo: "resposta" },
+  { label: "DFD", x: 0.67, y: 0.11, tipo: "resposta" },
+  { label: "ETP", x: 0.93, y: 0.23, tipo: "resposta" },
+  { label: "TR", x: 0.94, y: 0.72, tipo: "resposta" },
+  { label: "Edital e Contrato", x: 0.68, y: 0.90, tipo: "resposta" },
 ];
 
 // Fonte em azul-acinzentado, processo no verde da marca, resposta em ouro:
@@ -125,7 +129,6 @@ export default function GrafoSection() {
 
     const nos: No[] = LAYOUT.map((n) => ({ ...n, glow: 0 }));
     const iProcesso = nos.findIndex((n) => n.tipo === "processo");
-    const iResposta = nos.findIndex((n) => n.tipo === "resposta");
 
     // Toda fonte alimenta o processo; o processo produz a resposta.
     const arestas: [number, number][] = nos
@@ -133,7 +136,10 @@ export default function GrafoSection() {
         n.tipo === "fonte" ? ([i, iProcesso] as [number, number]) : null
       )
       .filter((e): e is [number, number] => e !== null);
-    arestas.push([iProcesso, iResposta]);
+    nos.forEach((n, i) => {
+      if (n.tipo === "resposta") arestas.push([iProcesso, i]);
+    });
+    arestas.push([0, 1], [0, 3], [1, 2], [2, 4], [4, 5], [3, 5], [8, 9], [9, 7], [7, 10], [10, 11]);
 
     // Fase inicial espalhada: sem isso todos os pulsos piscariam juntos e
     // pareceriam um flash, não um fluxo.
@@ -149,6 +155,8 @@ export default function GrafoSection() {
     const mouse = { x: -9999, y: -9999, dentro: false };
     let raf = 0;
     let visivel = true;
+    let tempo = 0;
+    let ultimoFrame = 0;
 
     const medir = () => {
       const r = wrap.getBoundingClientRect();
@@ -168,7 +176,7 @@ export default function GrafoSection() {
       }
 
       // margem interna pra os rótulos não encostarem na borda
-      const mx = 78;
+      const mx = w < 520 ? 30 : 78;
       const my = 34;
       nos.forEach((n) => {
         n.px = mx + n.x * (w - mx * 2);
@@ -177,7 +185,7 @@ export default function GrafoSection() {
     };
 
     const raio = (n: No) =>
-      n.tipo === "processo" ? 7 : n.tipo === "resposta" ? 6.5 : 4;
+      n.tipo === "processo" ? 12 : n.tipo === "resposta" ? 5 : 4;
 
     /** Ponto de controle da curva: perpendicular ao meio, lado alternado. */
     const controle = (A: No, B: No, i: number) => {
@@ -299,6 +307,8 @@ export default function GrafoSection() {
         // Canvas estreito (celular) pede tipo menor: com 11px os rótulos
         // se encostavam uns nos outros e o grafo virava sopa de letras.
         const estreito = w < 520;
+        // Em telas pequenas os nomes continuam na lista HTML abaixo.
+        if (estreito && n.tipo !== "processo") return;
         alvo.font =
           n.tipo === "fonte"
             ? `500 ${estreito ? 9.5 : 11}px ui-monospace, monospace`
@@ -326,7 +336,17 @@ export default function GrafoSection() {
           alvo.textAlign = "left";
           x = Math.max(BORDA, w - BORDA - larguraTexto);
         }
-        alvo.fillText(n.label, x, n.py!);
+        if (n.tipo === "processo") {
+          alvo.textAlign = "center";
+          alvo.fillText(n.label, n.px, n.py! + 32);
+          alvo.strokeStyle = "rgba(138,203,82,0.25)";
+          alvo.lineWidth = 1;
+          alvo.beginPath();
+          alvo.arc(n.px, n.py!, 24, 0, Math.PI * 2);
+          alvo.stroke();
+        } else {
+          alvo.fillText(n.label, x, n.py!);
+        }
       });
     };
 
@@ -354,9 +374,19 @@ export default function GrafoSection() {
       cena(ctx, false);
     };
 
-    const tick = () => {
+    const tick = (agora = 0) => {
       raf = requestAnimationFrame(tick);
+      const delta = ultimoFrame ? Math.min((agora - ultimoFrame) / 1000, 0.05) : 0;
+      ultimoFrame = agora;
       if (!visivel) return;
+      if (!reduzido) tempo += delta;
+
+      nos.forEach((n, i) => {
+        const margem = w < 520 ? 30 : 78;
+        const amplitude = reduzido || n.tipo === "processo" ? 0 : w < 520 ? 7 : 14;
+        n.px = margem + n.x * (w - margem * 2) + Math.sin(tempo * 0.35 + i * 1.7) * amplitude;
+        n.py = 34 + n.y * (h - 68) + Math.cos(tempo * 0.28 + i * 1.3) * amplitude;
+      });
 
       // Desenho de entrada, escalonado. As arestas estão na ordem
       // "fontes primeiro, processo → resposta por último", então um atraso
@@ -457,7 +487,7 @@ export default function GrafoSection() {
             ref={wrapRef}
             className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/[0.07] bg-black/25 shadow-[inset_0_1px_0_rgba(255,255,255,.06)] md:h-[520px]"
           >
-            <canvas ref={canvasRef} className="block h-full w-full" />
+            <canvas ref={canvasRef} aria-hidden="true" className="block h-full w-full" />
           </div>
         </Reveal>
 

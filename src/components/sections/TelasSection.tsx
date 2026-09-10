@@ -77,20 +77,32 @@ export default function TelasSection() {
         </div>
 
         {/* ABAS */}
+        <p className="mt-10 text-sm text-muted">{telas.instrucao}</p>
         <div
           role="tablist"
           aria-label="Telas do produto"
-          className="mt-14 flex gap-1.5 overflow-x-auto rounded-full border border-line bg-paper-2 p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible"
+          className="mt-3 flex gap-1.5 overflow-x-auto rounded-full border border-line bg-paper-2 p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible"
         >
           {telas.abas.map((a, i) => (
             <button
               key={a.id}
               role="tab"
+              id={`aba-${a.id}`}
+              tabIndex={i === ativa ? 0 : -1}
               aria-selected={i === ativa}
               aria-controls={`painel-${a.id}`}
               onClick={() => trocar(i)}
+              onKeyDown={(event) => {
+                const proxima = event.key === "ArrowRight" ? (i + 1) % telas.abas.length
+                  : event.key === "ArrowLeft" ? (i - 1 + telas.abas.length) % telas.abas.length
+                  : event.key === "Home" ? 0 : event.key === "End" ? telas.abas.length - 1 : null;
+                if (proxima === null) return;
+                event.preventDefault();
+                trocar(proxima);
+                root.current?.querySelector<HTMLButtonElement>(`#aba-${telas.abas[proxima].id}`)?.focus();
+              }}
               className={cn(
-                "relative shrink-0 rounded-full px-4 py-2.5 text-[13.5px] font-medium whitespace-nowrap transition-colors duration-300",
+                "relative shrink-0 rounded-full px-4 py-2.5 text-[13.5px] font-medium whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2",
                 i === ativa ? "text-white" : "text-muted hover:text-fg"
               )}
             >
@@ -111,8 +123,11 @@ export default function TelasSection() {
         <div
           id={`painel-${aba.id}`}
           role="tabpanel"
+          aria-labelledby={`aba-${aba.id}`}
+          tabIndex={0}
           className="mt-8 overflow-hidden rounded-3xl border border-line bg-white shadow-[0_28px_70px_-32px_rgba(13,20,60,.35)]"
         >
+          <div aria-hidden="true" className="h-1 bg-[linear-gradient(90deg,#2B62E0_0%,#2B62E0_55%,#70AC44_78%,#F0C044_100%)]" />
           {/* barra de janela */}
           <div className="flex items-center gap-2.5 border-b border-line bg-paper-2 px-5 py-3.5">
             <span className="h-2.5 w-2.5 rounded-full bg-navy/12" />

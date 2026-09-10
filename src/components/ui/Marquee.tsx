@@ -18,10 +18,13 @@ import { cn } from "@/lib/utils";
 
 export default function Marquee({
   itens,
+  pontos = "neutro",
   duration = 46,
   className,
 }: {
   itens: readonly string[];
+  /** "marca" pinta os separadores no verde e no ouro da logo, alternados. */
+  pontos?: "neutro" | "marca";
   duration?: number;
   className?: string;
 }) {
@@ -32,7 +35,18 @@ export default function Marquee({
           <span className="data px-7 text-[11px] tracking-[0.2em] whitespace-nowrap uppercase">
             {t}
           </span>
-          <span className="h-1 w-1 shrink-0 rounded-full bg-current opacity-35" />
+          {/* O separador é onde a cor da marca entra. No texto ela custaria
+              legibilidade; num ponto de 4px ela só pontua o ritmo. */}
+          <span
+            className={cn(
+              "h-1 w-1 shrink-0 rounded-full",
+              pontos === "marca"
+                ? i % 2 === 0
+                  ? "bg-leaf"
+                  : "bg-gold"
+                : "bg-current opacity-35"
+            )}
+          />
         </span>
       ))}
     </div>
@@ -44,6 +58,7 @@ export default function Marquee({
         "relative flex overflow-hidden border-y border-line py-4",
         className
       )}
+      style={{ maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)" }}
     >
       <div
         className="animate-marquee flex w-max"

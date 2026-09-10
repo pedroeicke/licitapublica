@@ -35,6 +35,15 @@ export default function QuemSection() {
           el.textContent = String(Math.round(obj.v));
         },
       });
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        gsap.fromTo(".qs-clock-hand", { rotation: 0 }, {
+          rotation: 288,
+          svgOrigin: "50 50",
+          duration: 1.8,
+          ease: "expo.out",
+          scrollTrigger: { trigger: ".qs-destaque", start: "top 80%", once: true },
+        });
+      }
     },
     { scope: root }
   );
@@ -69,8 +78,17 @@ export default function QuemSection() {
             <div className="qs-destaque flex h-full flex-col justify-center rounded-3xl border border-line bg-paper-2 p-9 md:p-11">
               <div className="flex items-start">
                 <span className="qs-num data text-[clamp(4.5rem,11vw,8.5rem)] leading-[0.85] font-semibold text-fg">
-                  0
+                  {quem.destaque.valor}
                 </span>
+                <svg aria-hidden="true" viewBox="0 0 100 100" className="ml-auto h-20 w-20 shrink-0 text-blue/45 sm:h-24 sm:w-24">
+                  <circle cx="50" cy="50" r="43" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle) => (
+                    <path key={angle} d="M50 12v5" stroke="currentColor" strokeWidth="1.5" transform={`rotate(${angle} 50 50)`} />
+                  ))}
+                  <path className="qs-clock-hand" d="M50 50V25" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M50 50L67 59" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="50" cy="50" r="3" fill="currentColor" />
+                </svg>
                 <span className="data mt-2 text-[clamp(1.6rem,3vw,2.4rem)] leading-none font-medium text-blue">
                   {quem.destaque.sufixo}
                 </span>

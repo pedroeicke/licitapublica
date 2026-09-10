@@ -42,6 +42,10 @@ export default function CicloHorizontal() {
       // Trilho e barra de progresso na MESMA timeline: um trigger só, e a
       // barra nunca dessincroniza do que está na tela.
       const tl = gsap.timeline({
+        onUpdate: () => {
+          const i = Math.round(tl.progress() * (ciclo.etapas.length - 1));
+          setAtivo((anterior) => (anterior === i ? anterior : i));
+        },
         scrollTrigger: {
           trigger: root.current,
           start: "top top",
@@ -55,10 +59,6 @@ export default function CicloHorizontal() {
           // re-renderizaria os nove cards ~60×/s. O React descarta um
           // setState com o mesmo valor, mas só depois de reconciliar —
           // então filtramos antes.
-          onUpdate: (self) => {
-            const i = Math.round(self.progress * (ciclo.etapas.length - 1));
-            setAtivo((anterior) => (anterior === i ? anterior : i));
-          },
         },
       });
 
@@ -112,18 +112,12 @@ export default function CicloHorizontal() {
             </p>
           </div>
 
-          {/* progresso: trilho + contador de etapa */}
+          {/* Progresso visual: os cartões não representam etapas obrigatórias. */}
           <div className="mt-5 flex items-center gap-4 md:mt-8">
             <div className="relative h-px flex-1 bg-line-strong">
               <span className="ciclo-bar absolute inset-0 origin-left scale-x-0 bg-blue" />
             </div>
-            <span className="data shrink-0 text-xs text-faint">
-              <span className="text-blue">
-                {String(ativo + 1).padStart(2, "0")}
-              </span>
-              {" / "}
-              {String(ciclo.etapas.length).padStart(2, "0")}
-            </span>
+            <span className="data shrink-0 text-[11px] text-muted">Explore o fluxo</span>
           </div>
         </div>
 
@@ -131,31 +125,19 @@ export default function CicloHorizontal() {
         <div className="relative mt-5 md:mt-8">
           <div
             ref={track}
-            className="flex w-max gap-4 px-6 pb-10 sm:gap-5 md:px-10 md:pb-20"
+            className="flex w-max gap-4 px-[10vw] pt-3 pb-10 sm:gap-5 sm:px-[19vw] md:px-[calc(50vw-190px)] md:pb-20"
           >
             {ciclo.etapas.map((e, i) => (
               <GlowCard
                 key={e.n}
                 as="article"
                 className={cn(
-                  "group flex min-h-[300px] w-[80vw] shrink-0 flex-col justify-between p-6 sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
-                  i === ativo && "card-on",
+                  "group flex min-h-[300px] w-[80vw] shrink-0 flex-col justify-between p-6 transition-[transform,opacity,filter,box-shadow] duration-500 motion-reduce:transition-none sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
+                  i === ativo ? "card-on -translate-y-2 scale-100 opacity-100" : "scale-[0.94] opacity-60 blur-[0.5px]",
                 )}
               >
                 <div>
                   <div className="flex items-baseline justify-between gap-4">
-                    {/* número gigante em outline: marca a posição na sequência
-                      sem competir com o título da etapa */}
-                    <span
-                      className={cn(
-                        "data text-[3rem] leading-none font-semibold transition-colors duration-500 sm:text-[3.4rem]",
-                        i === ativo
-                          ? "text-blue/70"
-                          : "text-navy/[0.08]",
-                      )}
-                    >
-                      {e.n}
-                    </span>
                     {/* a base legal em mono: é dado verificável, não copy */}
                     <span className="data rounded-full border border-line px-2.5 py-1 text-[10.5px] text-faint">
                       {e.ref}
@@ -174,9 +156,7 @@ export default function CicloHorizontal() {
                 <div className="mt-6 flex items-center gap-2 text-faint sm:mt-7">
                   <span className="h-px w-full bg-line" />
                   <span className="data shrink-0 text-[10px] tracking-[0.18em] uppercase">
-                    {i < ciclo.etapas.length - 1
-                      ? "herda contexto"
-                      : "ciclo fechado"}
+                    contexto conectado
                   </span>
                 </div>
               </GlowCard>

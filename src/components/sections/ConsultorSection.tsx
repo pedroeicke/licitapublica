@@ -23,16 +23,66 @@ import { SectionEyebrow, SectionTitle } from "@/components/ui/Section";
 export default function ConsultorSection() {
   const { consultor } = content;
   const root = useRef<HTMLDivElement>(null);
+  const digitado = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
-      gsap
-        .timeline({
-          defaults: { ease: "expo.out", duration: 0.85 },
-          scrollTrigger: { trigger: ".cs-thread", start: "top 74%", once: true },
-        })
-        .from(".cs-pergunta", { autoAlpha: 0, y: 26, x: -14 })
-        .from(".cs-resposta", { autoAlpha: 0, y: 26, x: 14 }, "-=0.5")
+      const alvo = digitado.current;
+      const texto = consultor.pergunta.texto;
+      const reduzido = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      const tl = gsap.timeline({
+        defaults: { ease: "expo.out", duration: 0.85 },
+        scrollTrigger: { trigger: ".cs-thread", start: "top 74%", once: true },
+      });
+
+      tl.from(".cs-pergunta", {
+        autoAlpha: 0,
+        y: 26,
+        x: -14,
+        // A limpeza acontece AQUI, no instante em que a timeline começa —
+        // não na montagem. Limpando na montagem, um gatilho que não
+        // dispare (JS que falhou antes, ScrollTrigger sem refresh) deixaria
+        // a pergunta em branco pra sempre. Neste ponto o balão ainda está
+        // em autoAlpha 0, então ninguém vê a troca.
+        onStart: () => {
+          if (alvo && !reduzido) alvo.textContent = "";
+        },
+      });
+
+      // A pergunta é DIGITADA. O pedido foi "à medida que eu fosse
+      // digitando" — e quem digita, na cena, é o agente de contratação.
+      // Por isso o efeito vive na pergunta e não na resposta: além de ser
+      // a leitura certa, a resposta traz o dispositivo grifado num
+      // <strong> inline, e datilografar HTML rico caractere a caractere
+      // quebraria o grifo.
+      //
+      // O texto sai do DOM só durante a animação. Sem movimento, ele nunca
+      // sai — a cena inteira continua legível parada.
+      if (alvo && !reduzido) {
+        const passo = { n: 0 };
+        tl.to(
+          passo,
+          {
+            n: texto.length,
+            duration: Math.min(2.4, texto.length * 0.03),
+            ease: "none",
+            onUpdate: () => {
+              alvo.textContent = texto.slice(0, Math.round(passo.n));
+            },
+            onComplete: () => {
+              alvo.textContent = texto;
+            },
+          },
+          "-=0.35",
+        ).to(".cs-cursor", { autoAlpha: 0, duration: 0.3 }, ">-0.1");
+      } else {
+        gsap.set(".cs-cursor", { autoAlpha: 0 });
+      }
+
+      tl.from(".cs-resposta", { autoAlpha: 0, y: 26, x: 14 }, ">-0.15")
         // a fonte "encaixa" por baixo — daí o y maior e o ease mais longo
         .from(".cs-fonte", { autoAlpha: 0, y: 42, duration: 1.05 }, "-=0.35")
         .from(".cs-ref", { backgroundSize: "0% 100%", duration: 0.7 }, "-=0.55");
@@ -65,7 +115,11 @@ export default function ConsultorSection() {
               {consultor.pergunta.autor}
             </p>
             <div className="card rounded-tl-sm px-6 py-5 text-[15.5px] leading-relaxed text-fg">
-              {consultor.pergunta.texto}
+              <span ref={digitado}>{consultor.pergunta.texto}</span>
+              <span
+                aria-hidden
+                className="cs-cursor ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[0.18em] bg-blue"
+              />
             </div>
           </div>
 

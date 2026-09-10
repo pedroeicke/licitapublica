@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { content } from "@/content";
 import Wordmark from "@/components/ui/Wordmark";
@@ -28,6 +28,35 @@ export default function Header() {
   const [active, setActive] = useState<string>("");
   const [scrolled, setScrolled] = useState(false);
   const [aberto, setAberto] = useState(false);
+  const desktopNav = useRef<HTMLElement>(null);
+  const indicator = useRef<HTMLSpanElement>(null);
+
+  const destacar = (link: HTMLAnchorElement | null) => {
+    const marker = indicator.current;
+    if (!marker) return;
+    marker.style.opacity = link ? "1" : "0";
+    if (!link) return;
+    marker.style.transform = `translateX(${link.offsetLeft}px)`;
+    marker.style.width = `${link.offsetWidth}px`;
+  };
+
+  const restaurarDestaque = () => {
+    destacar(desktopNav.current?.querySelector<HTMLAnchorElement>('a[aria-current="true"]') ?? null);
+  };
+
+  useEffect(() => {
+    const navElement = desktopNav.current;
+    if (!navElement) return;
+    const atualizar = () => {
+      const focused = navElement.querySelector<HTMLAnchorElement>("a:focus-visible");
+      const hovered = navElement.querySelector<HTMLAnchorElement>("a:hover");
+      destacar(focused ?? hovered ?? navElement.querySelector<HTMLAnchorElement>('a[aria-current="true"]'));
+    };
+    atualizar();
+    const observer = new ResizeObserver(atualizar);
+    observer.observe(navElement);
+    return () => observer.disconnect();
+  }, [active]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -77,7 +106,7 @@ export default function Header() {
         className={cn(
           "fixed inset-x-0 top-3.5 z-[60] mx-auto w-fit transition-[background,border-color,box-shadow] duration-500",
           "flex max-w-[94vw] items-center gap-1 rounded-full border py-1.5 pr-1.5 pl-3 md:py-2.5 md:pr-2.5 md:pl-4",
-          "border-white/12 bg-navy/85 backdrop-blur-2xl backdrop-saturate-150",
+          "border-white/25 bg-navy/70 backdrop-blur-2xl backdrop-saturate-150",
           scrolled
             ? "shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_20px_50px_-18px_rgba(13,20,60,.55)]"
             : "shadow-[inset_0_1px_0_rgba(255,255,255,.1),0_10px_30px_-16px_rgba(13,20,60,.4)]",
@@ -92,21 +121,33 @@ export default function Header() {
         </a>
 
         <nav
-          className="hidden shrink-0 items-center gap-0.5 md:flex"
+          ref={desktopNav}
+          className="relative hidden shrink-0 items-center gap-0.5 md:flex"
           aria-label="Seções"
+          onMouseLeave={restaurarDestaque}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) restaurarDestaque();
+          }}
         >
+          <span
+            ref={indicator}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 rounded-full border border-white/20 bg-white/15 opacity-0 shadow-[inset_0_1px_0_rgba(255,255,255,.22),0_3px_12px_rgba(0,0,0,.08)] backdrop-blur-md transition-[transform,width,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+          />
           {nav.links.map((l) => {
             const on = active === l.href.slice(1);
             return (
               <a
                 key={l.href}
                 href={l.href}
+                onMouseEnter={(event) => destacar(event.currentTarget)}
+                onFocus={(event) => destacar(event.currentTarget)}
                 aria-current={on ? "true" : undefined}
                 className={cn(
-                  "rounded-full px-2.5 py-2 text-[12.5px] font-medium whitespace-nowrap transition-colors duration-200",
+                  "relative z-10 rounded-full px-2.5 py-2 text-[12.5px] font-medium whitespace-nowrap transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
                   on
-                    ? "bg-blue-lite/25 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.14)]"
-                    : "text-white/60 hover:bg-white/10 hover:text-white",
+                    ? "text-white"
+                    : "text-white/75 hover:text-white focus-visible:text-white",
                 )}
               >
                 {l.label}

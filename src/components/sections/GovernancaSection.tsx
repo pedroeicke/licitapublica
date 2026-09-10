@@ -229,8 +229,8 @@ export default function GovernancaSection() {
         </ol>
       </Section>
 
-      <div className="text-leaf/80">
-        <Marquee itens={governanca.marquee} duration={58} />
+      <div className="dive-navy bg-navy text-white">
+        <Marquee itens={governanca.marquee} duration={58} pontos="marca" />
       </div>
     </>
   );

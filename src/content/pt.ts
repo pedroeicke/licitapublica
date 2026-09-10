@@ -10,9 +10,9 @@
 
 export const pt = {
   meta: {
-    title: "Licita Pública — a inteligência artificial das contratações públicas",
+    title: "Licita Pública — a inteligência artificial das Contratações Públicas",
     description:
-      "Minutas de DFD, ETP, TR, Edital e Contratos geradas por IA, com pesquisa de preços no rito da IN nº 65/2021 e respostas com fonte citada. Produto da Plenum Brasil.",
+      "Minutas de DFD, ETP, TR, Edital e Contratos geradas por IA, com pesquisa de preços no rito da IN nº 65/2021 e respostas com fonte citada. Uma solução do Grupo Plenum Brasil.",
   },
 
   nav: {
@@ -34,10 +34,10 @@ export const pt = {
   },
 
   hero: {
-    eyebrow: "Inteligência artificial · Lei nº 14.133/2021",
+    eyebrow: "Inteligência artificial · Contratações Públicas",
     // Uma cor só no título. A ênfase é feita pela quebra de linha e pelo
     // peso — não por navy/verde/ouro na mesma frase.
-    titleLines: ["A inteligência artificial", "das contratações públicas."],
+    titleLines: ["A inteligência artificial", "das Contratações Públicas."],
     // Duas linhas. O briefing completo foi pra tese e pras seções.
     sub: "Uma conversa guiada gera as minutas da fase interna — contextualizadas, editáveis e juridicamente seguras.",
     ctaPrimary: "Agendar demonstração",
@@ -49,7 +49,7 @@ export const pt = {
       { value: "30.000+", label: "gestores capacitados" },
       { value: "10+", label: "anos em gestão pública" },
     ],
-    credito: "Produto da Plenum Brasil",
+    credito: "Uma solução do Grupo Plenum Brasil",
 
     // Moldura e cartões flutuantes do palco. O restante do que existia
     // aqui (trilho de módulos, painel de fontes, linhas do documento) era
@@ -98,8 +98,8 @@ export const pt = {
 
   // Set-piece 1 — scroll horizontal pinado.
   ciclo: {
-    eyebrow: "O ciclo completo · mergulho",
-    titleLines: ["Nove etapas,", "um processo só."],
+    eyebrow: "O ciclo das Contratações Públicas",
+    titleLines: ["Um fluxo integrado,", "um processo só."],
     intro:
       "O setor requisitante registra a necessidade e a estratégia numa entrevista guiada, ligada ao Plano de Contratações Anual. Daí em diante, cada etapa herda o contexto da anterior.",
     etapas: [
@@ -165,6 +165,7 @@ export const pt = {
     eyebrow: "Produto real",
     titleLines: ["Menos erros.", "Contratações mais ágeis."],
     body: "Pesquisa, elaboração, análise e consultas no mesmo ambiente. Navegue pelas telas — o fluxo acontece de maneira didática e aprofundada.",
+    instrucao: "Selecione uma funcionalidade para conhecer os recursos.",
     abas: [
       {
         id: "pesquisa",
@@ -270,6 +271,10 @@ export const pt = {
       "BPS",
       "Seu processo",
       "Resposta com fonte",
+      "DFD",
+      "ETP",
+      "TR",
+      "Edital e Contrato",
     ],
     rodape: "Sincronização diária · PNCP · agendas dos tribunais",
   },
@@ -360,11 +365,14 @@ export const pt = {
       },
     ],
     marquee: [
-      "Sigilo do art. 13",
-      "Isolamento por órgão",
-      "Chave de IA própria",
-      "Região São Paulo",
-      "LGPD e regulação de IA",
+      "DFD",
+      "ETP",
+      "Termo de Referência",
+      "Mapa de Riscos",
+      "Edital",
+      "Contrato",
+      "Ata de Registro de Preços",
+      "Parecer Jurídico",
     ],
   },
 
@@ -463,8 +471,8 @@ export const pt = {
 
   quem: {
     eyebrow: "Quem está por trás",
-    titleLines: ["Feita por quem ensina", "licitação há uma década."],
-    body: "A Licita Pública é produto da Plenum Brasil, que capacitou mais de 30 mil gestores públicos em 10 anos. O conhecimento que virou apostila agora escreve documento, confere conformidade e responde dúvida dentro da plataforma.",
+    titleLines: ["Feita por quem ensina", "Gestão Pública há uma década."],
+    body: "A Licita Pública é uma solução do Grupo Plenum Brasil, que capacitou mais de 30 mil gestores públicos em 10 anos. O conhecimento que virou apostila agora escreve documento, confere conformidade e responde dúvida dentro da plataforma.",
     nota: "Nada de depoimento inventado nem número inflado: o que mostramos é o produto real.",
     destaque: {
       valor: "80",
@@ -534,9 +542,9 @@ export const pt = {
   },
 
   footer: {
-    empresa: "Plenum Brasil",
+    empresa: "Plenum GovTech",
     linha: "Licita Pública · Lei nº 14.133/2021",
-    email: "contato@plenumbrasil.com.br",
+    email: "contato@licitapublica.com.br",
     ano: "2026",
     politica: "Política de Privacidade",
     dpo: "Encarregado de Dados (DPO) e canal para titulares exercerem os direitos da LGPD.",

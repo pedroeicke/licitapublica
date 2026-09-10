@@ -1,6 +1,9 @@
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
 import SplitReveal from "@/components/motion/SplitReveal";
+import NetworkBackdrop from "@/components/ui/NetworkBackdrop";
+import AnimatedMetric from "@/components/ui/AnimatedMetric";
+import GlowCard from "@/components/ui/GlowCard";
 
 // ============================================================
 // TESE — o primeiro mergulho navy.
@@ -27,8 +30,15 @@ export default function TeseSection() {
     <section
       id="tese"
       aria-labelledby="tese-title"
-      className="dive-navy relative z-10 overflow-hidden px-6 py-24 md:px-10 md:py-36"
+      className="dive-navy relative z-10 overflow-hidden px-6 py-28 md:px-10 md:py-40"
     >
+      <NetworkBackdrop />
+      <svg aria-hidden="true" viewBox="0 0 1440 56" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 -top-px h-8 w-full fill-paper md:h-14">
+        <path d="M0 0H1440V12C1110 65 920 8 720 27S260 67 0 12Z" />
+      </svg>
+      <svg aria-hidden="true" viewBox="0 0 1440 56" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 -bottom-px h-8 w-full rotate-180 fill-paper md:h-14">
+        <path d="M0 0H1440V12C1110 65 920 8 720 27S260 67 0 12Z" />
+      </svg>
       <div
         aria-hidden
         className="orb orb-b absolute -top-48 left-1/2 h-[520px] w-[880px] -translate-x-1/2"
@@ -63,17 +73,17 @@ export default function TeseSection() {
         />
 
         {/* Os quatro números do produto. Ouro = dado, sempre. */}
-        <div className="mt-20 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {tese.stats.map((s, i) => (
             <Reveal key={s.value + i} delay={0.06 * i}>
-              <div className="border-t border-line pt-6">
+              <GlowCard className="h-full rounded-2xl p-6">
                 <div className="data text-[clamp(2.2rem,3.4vw,3rem)] leading-none font-medium text-gold">
-                  {s.value}
+                  <AnimatedMetric value={s.value} />
                 </div>
                 <p className="mt-4 text-[13.5px] leading-relaxed text-muted">
                   {s.label}
                 </p>
-              </div>
+              </GlowCard>
             </Reveal>
           ))}
         </div>

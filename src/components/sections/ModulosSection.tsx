@@ -66,8 +66,8 @@ function iconeDoModulo(sigla: string) {
 // Poça de luz azul MUITO clara sobre branco — dá chão ao objeto sem virar
 // um retângulo colorido.
 const FUNDO = [
-  "radial-gradient(72% 64% at 50% 42%, rgba(91,155,255,0.16), transparent 74%)",
-  "linear-gradient(#F3F7FD, #FFFFFF)",
+  "radial-gradient(72% 64% at 50% 42%, rgba(91,155,255,0.07), transparent 74%)",
+  "linear-gradient(#F6F8FC, #FFFFFF)",
 ].join(", ");
 
 // Os PNGs foram renderizados pra fundo escuro: as arestas são emissivas e,
@@ -75,7 +75,7 @@ const FUNDO = [
 // mais contraste e saturação, e uma sombra azulada que faz o objeto pousar
 // em vez de flutuar recortado.
 const REALCE =
-  "saturate(1.18) contrast(1.12) drop-shadow(0 14px 22px rgba(13,20,60,0.22))";
+  "saturate(0.72) contrast(1.02) drop-shadow(0 8px 14px rgba(13,20,60,0.12))";
 
 export default function ModulosSection() {
   const { modulos } = content;
@@ -122,7 +122,7 @@ export default function ModulosSection() {
                     width={640}
                     height={640}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="absolute inset-0 h-full w-full scale-[0.92] object-contain"
+                    className="absolute inset-0 h-full w-full scale-[0.78] object-contain"
                     style={{ filter: REALCE }}
                   />
                 ) : (
