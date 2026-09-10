@@ -60,7 +60,7 @@ export default function TelasSection() {
     <section
       id="telas"
       aria-labelledby="telas-title"
-      className="relative scroll-mt-28 px-6 py-24 md:px-10 md:py-36"
+      className="relative scroll-mt-28 px-6 py-16 md:px-10 md:py-24"
     >
       <div ref={root} className="relative mx-auto w-full max-w-[1180px]">
         <SectionEyebrow className="mb-9">{telas.eyebrow}</SectionEyebrow>

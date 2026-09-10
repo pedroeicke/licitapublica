@@ -63,7 +63,7 @@ export default function QuemSection() {
     <section
       id="quem"
       aria-labelledby="quem-title"
-      className="relative scroll-mt-28 px-6 py-24 md:px-10 md:py-36"
+      className="relative scroll-mt-28 px-6 py-16 md:px-10 md:py-24"
     >
       <div ref={root} className="mx-auto w-full max-w-[1180px]">
         <SectionEyebrow className="mb-9">{quem.eyebrow}</SectionEyebrow>

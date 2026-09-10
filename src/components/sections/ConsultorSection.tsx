@@ -94,7 +94,7 @@ export default function ConsultorSection() {
     <section
       id="consultor"
       aria-labelledby="consultor-title"
-      className="relative scroll-mt-28 px-6 pt-24 md:px-10 md:pt-36"
+      className="relative scroll-mt-28 px-6 pt-16 md:px-10 md:pt-24"
     >
       {/* fundo e orbes: MergulhoNavy — Consultor e Grafo dividem um campo só */}
       <div ref={root} className="relative mx-auto w-full max-w-[900px]">

@@ -41,7 +41,7 @@ export default function DemoSection() {
     <section
       id="demo"
       aria-labelledby="demo-title"
-      className="dive-navy relative scroll-mt-28 overflow-hidden px-6 py-24 md:px-10 md:py-36"
+      className="dive-navy relative scroll-mt-28 overflow-hidden px-6 py-16 md:px-10 md:py-24"
     >
       <div
         aria-hidden

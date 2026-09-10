@@ -26,7 +26,7 @@ export default function SegurancaSection() {
     <section
       id="seguranca"
       aria-labelledby="seguranca-title"
-      className="dive-navy relative scroll-mt-28 overflow-hidden px-6 py-24 md:px-10 md:py-36"
+      className="dive-navy relative scroll-mt-28 overflow-hidden px-6 py-16 md:px-10 md:py-24"
     >
       <div
         aria-hidden
@@ -92,7 +92,7 @@ export default function SegurancaSection() {
         </StaggerReveal>
 
         <Reveal delay={0.1}>
-          <p className="mt-10 max-w-[70ch] text-[14px] leading-relaxed text-muted">
+          <p className="mt-10 text-[14px] leading-relaxed text-muted">
             {seguranca.nota}{" "}
             <a
               href="#"

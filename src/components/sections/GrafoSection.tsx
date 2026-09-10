@@ -470,7 +470,7 @@ export default function GrafoSection() {
     <section
       id="grafo"
       aria-labelledby="grafo-title"
-      className="relative scroll-mt-28 px-6 pt-16 pb-24 md:px-10 md:pt-24 md:pb-36"
+      className="relative scroll-mt-28 px-6 pt-16 pb-16 md:px-10 md:pt-24 md:pb-24"
     >
       {/* fundo e orbes: MergulhoNavy */}
       <div className="relative mx-auto w-full max-w-[1180px]">

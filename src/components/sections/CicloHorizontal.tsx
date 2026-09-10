@@ -77,7 +77,14 @@ export default function CicloHorizontal() {
 
   return (
     <section id="ciclo" aria-labelledby="ciclo-title" className="relative">
-      {/* h-svh e NADA de min-height maior que a viewport: seção pinada mais
+      {/* A raiz é h-svh: ela encolhe junto com a janela, mas o bloco de
+          título acima do trilho tem altura praticamente fixa. Em tela
+          baixa a folga embaixo some, e a primeira coisa a ser cortada pelo
+          overflow é a sombra azul do cartão ativo — o "glow cortado". As
+          media queries de ALTURA acima devolvem essa folga enxugando o
+          topo, que é espaço que sobra justamente nessas telas.
+
+          h-svh e NADA de min-height maior que a viewport: seção pinada mais
           alta que a tela tem o rodapé cortado por construção, e era isso que
           colava os cards no limite de baixo. O espaçamento abaixo do trilho
           é explícito (pb) em vez de "o que sobrar".
@@ -98,9 +105,9 @@ export default function CicloHorizontal() {
         />
 
         {/* cabeçalho fixo enquanto o trilho corre */}
-        <div className="relative z-10 mx-auto w-full max-w-[1180px] px-6 pt-20 md:px-10 md:pt-24">
+        <div className="relative z-10 mx-auto w-full max-w-[1180px] px-6 pt-20 md:px-10 md:pt-24 [@media(max-height:820px)]:pt-14 [@media(max-height:720px)]:pt-12">
           <SectionEyebrow>{ciclo.eyebrow}</SectionEyebrow>
-          <div className="mt-4 flex flex-col gap-4 md:mt-7 md:gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mt-4 flex flex-col gap-4 md:mt-7 md:gap-8 [@media(max-height:820px)]:md:mt-4 [@media(max-height:820px)]:md:gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2
               id="ciclo-title"
               className="display-tight max-w-[14ch] text-[length:var(--text-giant)] text-fg"
