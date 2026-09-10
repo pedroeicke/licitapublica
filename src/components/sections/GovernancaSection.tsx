@@ -48,6 +48,23 @@ type Linha = (typeof content)["governanca"]["linhas"][number];
 
 const ICONES: LucideIcon[] = [ClipboardCheck, ShieldCheck, ScrollText];
 
+// Uma cor da marca por linha de defesa, na mesma ordem da Curva ABC: as
+// duas fitas da logo (verde e ouro) e depois o azul da tipografia.
+//
+// O OURO LEVA TINTA MAIS FORTE de propósito. #F7CB4E sobre branco tem
+// pouco contraste: no gráfico ele funciona porque é uma barra sólida de
+// 10px, mas num ícone de 3,5px com traço fino ele desaparece. Fundo e
+// borda mais densos devolvem a presença sem mexer no token da marca.
+//
+// O rótulo continua em text-muted nos três. Colorir a caixa-alta em ouro
+// sobre claro seria trocar legibilidade por identidade — e a identidade
+// já está no ícone, na borda e no fundo.
+const CORES_LINHA = [
+  { icone: "text-leaf", borda: "border-leaf/35", fundo: "bg-leaf/[0.10]" },
+  { icone: "text-gold", borda: "border-gold/50", fundo: "bg-gold/[0.16]" },
+  { icone: "text-blue", borda: "border-blue/30", fundo: "bg-blue/[0.08]" },
+];
+
 // Quantas barras o medidor acende por nível. Antes ele derivava do índice
 // da lista, o que quebrava assim que dois itens tinham o mesmo nível.
 const BARRAS: Record<string, number> = { Alta: 3, Média: 2, Baixa: 1 };
@@ -191,14 +208,21 @@ export default function GovernancaSection() {
         <ol className="mt-14 grid gap-4 md:grid-cols-3">
           {governanca.linhas.map((l, i) => {
             const Icone = ICONES[i] ?? ClipboardCheck;
+            const cor = CORES_LINHA[i] ?? CORES_LINHA[2];
             return (
               <Reveal key={l.n} delay={0.09 * i} as="li">
                 <GlowCard className="card-lift group flex h-full flex-col overflow-hidden">
                   {/* ---- zona de texto ---- */}
                   <div className="p-7 md:p-8">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5">
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5",
+                        cor.borda,
+                        cor.fundo,
+                      )}
+                    >
                       <Icone
-                        className="h-3.5 w-3.5 shrink-0 text-blue"
+                        className={cn("h-3.5 w-3.5 shrink-0", cor.icone)}
                         strokeWidth={2}
                       />
                       <span className="data text-[9.5px] tracking-[0.16em] text-muted uppercase">
