@@ -5,6 +5,14 @@ import { cn } from "@/lib/utils";
 //
 // Os três set-pieces (ciclo, telas, grafo) ficam fora deste compasso de
 // propósito — é o contraste entre eles e o padrão que cria o ritmo.
+//
+// O NÚMERO É 96px (md), não 144. Isoladamente 144 parecia respiro; o que
+// se vê na página, porém, é a SOMA — o rodapé de uma seção mais o topo da
+// seguinte, 288px de vazio entre um cartão e o próximo título. Ninguém
+// projeta 288px de propósito: ele aparece porque cada seção foi pensada
+// sozinha. 96 aqui vira 192 entre duas, e é o mesmo número do respiro
+// depois da faixa corrida do Consultor — o site passa a ter um intervalo
+// só, repetido, em vez de vários que ninguém escolheu.
 // ============================================================
 
 export default function Section({
@@ -24,7 +32,7 @@ export default function Section({
     <section
       id={id}
       className={cn(
-        "relative scroll-mt-28 px-6 py-24 md:px-10 md:py-36",
+        "relative scroll-mt-28 px-6 py-16 md:px-10 md:py-24",
         className
       )}
     >
