@@ -133,7 +133,12 @@ export default function CicloHorizontal() {
                 as="article"
                 className={cn(
                   "group flex min-h-[300px] w-[80vw] shrink-0 flex-col justify-between p-6 transition-[transform,opacity,filter,box-shadow] duration-500 motion-reduce:transition-none sm:min-h-[300px] sm:w-[62vw] sm:p-7 md:w-[380px]",
-                  i === ativo ? "card-on -translate-y-2 scale-100 opacity-100" : "scale-[0.94] opacity-60 blur-[0.5px]",
+                  // 0.5px praticamente não se via — o cartão lateral só
+                  // parecia menor. Em 2px o desfoque vira o que ele deveria
+                  // ser: profundidade de campo, com o do meio em foco.
+                  i === ativo
+                    ? "card-on -translate-y-2 scale-100 opacity-100 blur-0"
+                    : "scale-[0.94] opacity-60 blur-[2px]",
                 )}
               >
                 <div>
