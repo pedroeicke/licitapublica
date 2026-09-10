@@ -1,12 +1,17 @@
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
 import SplitReveal from "@/components/motion/SplitReveal";
-import NetworkBackdrop from "@/components/ui/NetworkBackdrop";
 import AnimatedMetric from "@/components/ui/AnimatedMetric";
 import GlowCard from "@/components/ui/GlowCard";
 
 // ============================================================
 // TESE — o primeiro mergulho navy.
+//
+// A PASSAGEM É CANTO ARREDONDADO, não onda nem teia de pontos: as duas
+// foram testadas e recusadas. O bloco navy vira uma peça de cantos
+// redondos sobre o papel branco, e o `overflow-hidden` que já estava aqui
+// passa a recortar os orbes na curva — sem ele o brilho vazaria pelas
+// quinas e a borda arredondada não se leria.
 //
 // Ela vem DEPOIS do hero, sem sobreposição. Havia aqui um margin-top
 // negativo que fazia a seção subir por cima do hero pinado (efeito
@@ -30,15 +35,8 @@ export default function TeseSection() {
     <section
       id="tese"
       aria-labelledby="tese-title"
-      className="dive-navy relative z-10 overflow-hidden px-6 py-28 md:px-10 md:py-40"
+      className="dive-navy relative z-10 overflow-hidden rounded-[1.75rem] px-6 py-28 md:rounded-[2.5rem] md:px-10 md:py-40"
     >
-      <NetworkBackdrop />
-      <svg aria-hidden="true" viewBox="0 0 1440 56" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 -top-px h-8 w-full fill-paper md:h-14">
-        <path d="M0 0H1440V12C1110 65 920 8 720 27S260 67 0 12Z" />
-      </svg>
-      <svg aria-hidden="true" viewBox="0 0 1440 56" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 -bottom-px h-8 w-full rotate-180 fill-paper md:h-14">
-        <path d="M0 0H1440V12C1110 65 920 8 720 27S260 67 0 12Z" />
-      </svg>
       <div
         aria-hidden
         className="orb orb-b absolute -top-48 left-1/2 h-[520px] w-[880px] -translate-x-1/2"
