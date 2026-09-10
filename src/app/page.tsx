@@ -10,7 +10,6 @@ import MergulhoNavy from "@/components/sections/MergulhoNavy";
 import GovernancaSection from "@/components/sections/GovernancaSection";
 import SegurancaSection from "@/components/sections/SegurancaSection";
 import ParaQuemSection from "@/components/sections/ParaQuemSection";
-import ModulosSection from "@/components/sections/ModulosSection";
 import QuemSection from "@/components/sections/QuemSection";
 import DemoSection from "@/components/sections/DemoSection";
 import FaqSection from "@/components/sections/FaqSection";
@@ -27,7 +26,7 @@ import FaqSection from "@/components/sections/FaqSection";
 //   I.   PROMESSA   Hero pinado → cortina da tese
 //   II.  MÉTODO     Ciclo horizontal (set-piece) → telas com Flip
 //   III. PROVA      Preços (claro) → Consultor → Grafo (clímax)
-//   IV.  CONFIANÇA  Para quem → Governança → Segurança → Módulos → Quem
+//   IV.  CONFIANÇA  Para quem → Governança → Segurança → Quem
 //   V.   AÇÃO       Demonstração → FAQ
 //
 // Os mergulhos claros (telas, preços, quem) não são decoração: eles caem
@@ -66,7 +65,10 @@ export default function Home() {
       <ParaQuemSection />
       <GovernancaSection />
       <SegurancaSection />
-      <ModulosSection />
+      {/* Módulos saiu do site a pedido do cliente (10/09). O componente, o
+          conteúdo em pt.ts e os PNGs em public/modulos continuam no repo:
+          pra trazer de volta, reimporte ModulosSection, ponha a linha aqui
+          e devolva o link "#modulos" em nav.links. */}
       <QuemSection />
 
       {/* V — AÇÃO */}

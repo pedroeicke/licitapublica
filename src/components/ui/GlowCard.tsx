@@ -29,8 +29,7 @@ export default function GlowCard({
   className?: string;
   as?: "div" | "article" | "li";
   /** Aplica a matéria padrão (.card). Desligue quando o card já tem fundo
-   *  próprio — em Módulos, por exemplo, o fundo é navy com poça de luz e
-   *  o `.card` claro por baixo brigaria com ele. */
+   *  próprio, pra o `.card` por baixo não brigar com ele. */
   materia?: boolean;
 } & React.HTMLAttributes<HTMLElement>) {
   const ref = useRef<HTMLElement>(null);

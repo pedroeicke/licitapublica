@@ -25,7 +25,6 @@ export const pt = {
       { href: "#consultor", label: "Consultor" },
       { href: "#para-quem", label: "Para quem" },
       { href: "#seguranca", label: "Segurança" },
-      { href: "#modulos", label: "Módulos" },
     ],
     cta: "Demonstração",
     // Login da plataforma. O produto e o site institucional dividem o mesmo
