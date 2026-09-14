@@ -5,7 +5,7 @@ export default function Footer() {
   const { footer } = content;
 
   return (
-    <footer className="dive-navy relative overflow-hidden rounded-[var(--lp-raio-navy)] px-6 py-16 md:px-10">
+    <footer className="dive-navy relative overflow-hidden rounded-t-[var(--lp-raio-navy)] px-6 py-16 md:px-10">
       <div className="mx-auto w-full max-w-[1180px]">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div>

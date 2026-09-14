@@ -2,6 +2,7 @@ import { Check, ShieldCheck } from "lucide-react";
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
 import StaggerReveal from "@/components/motion/StaggerReveal";
+import Marquee from "@/components/ui/Marquee";
 import { SectionEyebrow, SectionTitle } from "@/components/ui/Section";
 
 // ============================================================
@@ -37,6 +38,21 @@ export default function SegurancaSection() {
           opacity: 0.7,
         }}
       />
+
+      {/* A faixa de minutas é a PRIMEIRA LINHA deste bloco, não uma peça à
+          parte. Solta acima da seção, com as duas arredondadas, virava uma
+          pílula fina sobre outro bloco azul com um vão branco no meio.
+          Aqui dentro ela encosta na borda de cima e o raio da seção a
+          recorta: fica uma peça só. As margens negativas anulam o padding
+          da seção pra ela sangrar de ponta a ponta. */}
+      <div className="relative z-10 -mx-6 -mt-16 mb-16 bg-navy md:-mx-10 md:-mt-24 md:mb-24">
+        <Marquee
+          itens={content.governanca.marquee}
+          duration={58}
+          pontos="marca"
+          className="border-t-0 text-white"
+        />
+      </div>
 
       <div className="relative mx-auto w-full max-w-[1180px]">
         <SectionEyebrow className="mb-9">{seguranca.eyebrow}</SectionEyebrow>

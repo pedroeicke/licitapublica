@@ -9,7 +9,6 @@ import {
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
 import GlowCard from "@/components/ui/GlowCard";
-import Marquee from "@/components/ui/Marquee";
 import Section, { SectionTitle } from "@/components/ui/Section";
 import { cn } from "@/lib/utils";
 
@@ -272,10 +271,6 @@ export default function GovernancaSection() {
           })}
         </ol>
       </Section>
-
-<div className="dive-navy mb-6 overflow-hidden rounded-[var(--lp-raio-navy)] bg-navy text-white">
-        <Marquee itens={governanca.marquee} duration={58} pontos="marca" />
-      </div>
     </>
   );
 }
