@@ -21,7 +21,7 @@ import type { ReactNode } from "react";
 
 export default function MergulhoNavy({ children }: { children: ReactNode }) {
   return (
-    <div className="dive-navy relative overflow-hidden">
+    <div className="dive-navy relative overflow-hidden rounded-[var(--lp-raio-navy)]">
       {/* Quatro orbes distribuídos pela altura do bloco inteiro. O de 34%
           fica em cima da antiga emenda: era ali que o corte aparecia. */}
       <div

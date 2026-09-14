@@ -24,6 +24,8 @@
    ============================================================ */
 
 :root {
+  /* Raio único de todo bloco com fundo azul. */
+  --lp-raio-navy: 1.75rem;
   /* --- o mundo --- */
   --lp-paper: #FFFFFF;
   --lp-paper-2: #F4F7FC;
@@ -620,5 +622,11 @@ html.lenis body {
 @media (prefers-reduced-motion: reduce) {
   .cs-cursor {
     animation: none;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --lp-raio-navy: 2.5rem;
   }
 }

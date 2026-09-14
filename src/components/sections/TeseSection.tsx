@@ -7,9 +7,9 @@ import GlowCard from "@/components/ui/GlowCard";
 // ============================================================
 // TESE — o primeiro mergulho navy.
 //
-// A PASSAGEM É CANTO ARREDONDADO, não onda nem teia de pontos: as duas
-// foram testadas e recusadas. O bloco navy vira uma peça de cantos
-// redondos sobre o papel branco, e o `overflow-hidden` que já estava aqui
+// A PASSAGEM É CANTO ARREDONDADO, em cima e embaixo, não onda nem teia de
+// pontos: as duas foram testadas e recusadas. O bloco navy vira uma peça
+// de cantos redondos sobre o papel branco, e o `overflow-hidden` que já estava aqui
 // passa a recortar os orbes na curva — sem ele o brilho vazaria pelas
 // quinas e a borda arredondada não se leria.
 //
@@ -35,7 +35,7 @@ export default function TeseSection() {
     <section
       id="tese"
       aria-labelledby="tese-title"
-      className="dive-navy relative z-10 overflow-hidden rounded-t-[1.75rem] px-6 py-28 md:rounded-t-[2.5rem] md:px-10 md:py-40"
+      className="dive-navy relative z-10 overflow-hidden rounded-[var(--lp-raio-navy)] px-6 py-28 md:px-10 md:py-40"
     >
       <div
         aria-hidden

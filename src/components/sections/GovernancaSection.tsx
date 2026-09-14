@@ -273,7 +273,7 @@ export default function GovernancaSection() {
         </ol>
       </Section>
 
-      <div className="dive-navy bg-navy text-white">
+<div className="dive-navy mb-6 overflow-hidden rounded-[var(--lp-raio-navy)] bg-navy text-white">
         <Marquee itens={governanca.marquee} duration={58} pontos="marca" />
       </div>
     </>
