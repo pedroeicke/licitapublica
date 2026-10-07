@@ -11,8 +11,10 @@ import { gsap, useGSAP } from "@/lib/gsap";
 // O filme do LicitaPública foi feito plano a plano em cima do comercial que
 // abre o site da Legora, então o hero segue a mesma moldura dele:
 //   - vídeo cobrindo a viewport inteira, mudo e em loop;
-//   - um degradê escuro só nas bordas (50% em cima e embaixo, 10% no meio),
-//     que dá leitura ao menu e ao título sem apagar o filme;
+//   - um degradê escuro só nas bordas (50% em cima, 70% embaixo, 10% no
+//     meio), que dá leitura ao menu e ao título sem apagar o filme. Embaixo
+//     é mais forte que o da Legora porque o filme abre na cidade holográfica,
+//     com os prédios de luz atrás do título;
 //   - título único, centralizado, perto do rodapé, peso regular e
 //     espaçamento negativo (-0.04em, 1.05 de entrelinha);
 //   - abaixo dele, uma linha de apoio e o botão em pílula com a setinha.
@@ -87,7 +89,7 @@ export default function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 13%, rgba(0,0,0,0.1) 72%, rgba(0,0,0,0.5) 100%)",
+            "linear-gradient(rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 13%, rgba(0,0,0,0.1) 58%, rgba(0,0,0,0.7) 100%)",
         }}
       />
 
