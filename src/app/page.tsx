@@ -1,6 +1,7 @@
 import RibbonSpine from "@/components/motion/RibbonSpine";
 import Hero from "@/components/sections/Hero";
 import TeseSection from "@/components/sections/TeseSection";
+import CamadasSection from "@/components/sections/CamadasSection";
 import CicloHorizontal from "@/components/sections/CicloHorizontal";
 import TelasSection from "@/components/sections/TelasSection";
 import PrecosSection from "@/components/sections/PrecosSection";
@@ -44,6 +45,8 @@ export default function Home() {
       <Hero />
       {/* precisa vir IMEDIATAMENTE após o Hero: a cortina usa o pin-spacer dele */}
       <TeseSection />
+      {/* as camadas da plataforma descendo com o scroll (dobra no formato da Legora) */}
+      <CamadasSection />
 
       {/* II — MÉTODO */}
       <CicloHorizontal />

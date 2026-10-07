@@ -78,6 +78,49 @@ export const pt = {
     },
   },
 
+  // Dobra das camadas (no formato do "Introducing the Legora aOS"): as
+  // placas descem e se empilham com o scroll, de baixo pra cima. Os textos
+  // reúnem o que o site já diz em ciclo, telas, grafo e segurança.
+  camadas: {
+    titulo: "Uma plataforma só, do PCA à fiscalização",
+    sub: "Fontes públicas, base legal e minutas conectadas no mesmo sistema",
+    itens: [
+      {
+        img: "/camadas/fontes.webp",
+        titulo: "Fontes públicas",
+        texto: "PNCP, Notas Fiscais, BPS, SINAPI e Painel de Preços numa base só, com sincronização diária.",
+      },
+      {
+        img: "/camadas/base-legal.webp",
+        titulo: "Base legal",
+        texto: "Lei nº 14.133/2021, decretos e acórdãos do TCU e dos TCEs, sempre com o dispositivo citado.",
+      },
+      {
+        img: "/camadas/contexto.webp",
+        titulo: "Contexto do órgão",
+        texto: "Plano de Contratações Anual e a entrevista guiada: cada etapa herda o contexto da anterior.",
+      },
+      {
+        img: "/camadas/minutas.webp",
+        titulo: "Minutas",
+        texto: "DFD, ETP, TR, Edital e Contrato coerentes entre si, em DOCX no padrão oficial.",
+      },
+      {
+        img: "/camadas/revisao.webp",
+        titulo: "Revisão",
+        texto: "Conferência dos elementos obrigatórios e minuta de parecer jurídico assistida por IA.",
+      },
+      {
+        img: "/camadas/governanca.webp",
+        titulo: "Governança e sigilo",
+        texto: "Ambiente isolado por órgão, trilha de auditoria e o sigilo da fase preparatória (art. 13).",
+      },
+    ],
+    // Não repetir o título do ciclo, que vem logo abaixo.
+    rodape: "Cada camada alimenta a de cima: a minuta já nasce com a fonte e a base legal.",
+    link: { label: "Conhecer as telas", href: "#telas" },
+  },
+
   tese: {
     eyebrow: "Do DFD ao apoio de gestão de instrumentos contratuais",
     titleLines: ["Do planejamento à fiscalização,", "num fluxo inteligente."],
