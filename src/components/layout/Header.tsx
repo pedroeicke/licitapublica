@@ -125,7 +125,7 @@ export default function Header() {
           </span>
         </a>
         <div className="relative flex h-[56px] items-center px-4 md:px-[30px]">
-          <nav aria-label="Seções" className="hidden items-center gap-6 lg:flex">
+          <nav aria-label="Seções" className="hidden items-center gap-6 xl:flex">
             {nav.links.map((l) => (
               <a
                 key={l.href}
@@ -166,7 +166,7 @@ export default function Header() {
               aria-expanded={aberto}
               aria-controls="menu-mobile"
               aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-              className="grid h-9 w-9 place-items-center rounded-full text-white/90 transition-colors hover:bg-white/10 lg:hidden"
+              className="grid h-9 w-9 place-items-center rounded-full text-white/90 transition-colors hover:bg-white/10 xl:hidden"
             >
               {aberto ? <X className="h-5 w-5" strokeWidth={2} /> : <Menu className="h-5 w-5" strokeWidth={2} />}
             </button>
@@ -259,7 +259,7 @@ export default function Header() {
       <div
         id="menu-mobile"
         hidden={!aberto}
-        className="dive-navy fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-navy-deep/96 px-6 pt-[120px] pb-12 backdrop-blur-xl md:hidden"
+        className="dive-navy fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-navy-deep/96 px-6 pt-[120px] pb-12 backdrop-blur-xl xl:hidden"
       >
         <nav aria-label="Seções" className="flex flex-col">
           {nav.links.map((l) => {
