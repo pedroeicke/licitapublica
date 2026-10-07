@@ -27,6 +27,9 @@ export default function Header() {
   const { nav } = content;
   const [active, setActive] = useState<string>("");
   const [scrolled, setScrolled] = useState(false);
+  // Enquanto o filme do hero está na tela, o menu é a barra transparente no
+  // formato da Legora; depois dele, volta a pill de vidro.
+  const [noHero, setNoHero] = useState(true);
   const [aberto, setAberto] = useState(false);
   const desktopNav = useRef<HTMLElement>(null);
   const indicator = useRef<HTMLSpanElement>(null);
@@ -59,7 +62,10 @@ export default function Header() {
   }, [active]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      setNoHero(window.scrollY < window.innerHeight - 80);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -102,9 +108,76 @@ export default function Header() {
 
   return (
     <>
+      {/* SOBRE O FILME — faixa de anúncio + barra transparente (hero da Legora) */}
+      <div
+        className={cn(
+          "fixed inset-x-0 top-0 z-[60] text-white transition-[opacity,transform] duration-500",
+          noHero || aberto ? "opacity-100" : "pointer-events-none -translate-y-3 opacity-0",
+        )}
+      >
+        <a
+          href={nav.anuncio.href}
+          className="flex h-11 items-center justify-center gap-2 overflow-hidden bg-navy px-4 text-[12px] whitespace-nowrap transition-colors hover:bg-navy-2 sm:text-[13px]"
+        >
+          <span className="truncate font-medium">{nav.anuncio.texto}</span>
+          <span className="shrink-0 text-white/70">
+            <span className="hidden sm:inline">{nav.anuncio.link} </span>→
+          </span>
+        </a>
+        <div className="relative flex h-[56px] items-center px-4 md:px-[30px]">
+          <nav aria-label="Seções" className="hidden items-center gap-6 lg:flex">
+            {nav.links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-[12px] whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+          <a
+            href="#topo"
+            aria-label="Licita Pública, início"
+            className="absolute left-1/2 -translate-x-1/2"
+          >
+            <Wordmark variante="branca" className="h-[22px] md:h-[24px]" />
+          </a>
+          <div className="ml-auto flex items-center gap-4">
+            <a
+              href={nav.entrar.href}
+              className="hidden text-[12px] whitespace-nowrap text-white/90 transition-colors hover:text-white sm:block"
+            >
+              {nav.entrar.label}
+            </a>
+            <a
+              href="#demo"
+              className="group hidden h-[30px] items-center gap-2 rounded-full bg-navy-2 pr-[5px] pl-3.5 text-[12px] whitespace-nowrap text-white transition-colors hover:bg-navy sm:inline-flex"
+            >
+              {nav.cta}
+              <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-navy transition-transform duration-300 group-hover:translate-x-0.5">
+                <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.25} aria-hidden>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </a>
+            <button
+              onClick={() => setAberto((v) => !v)}
+              aria-expanded={aberto}
+              aria-controls="menu-mobile"
+              aria-label={aberto ? "Fechar menu" : "Abrir menu"}
+              className="grid h-9 w-9 place-items-center rounded-full text-white/90 transition-colors hover:bg-white/10 lg:hidden"
+            >
+              {aberto ? <X className="h-5 w-5" strokeWidth={2} /> : <Menu className="h-5 w-5" strokeWidth={2} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <header
         className={cn(
-          "fixed inset-x-0 top-3.5 z-[60] mx-auto w-fit transition-[background,border-color,box-shadow] duration-500",
+          "fixed inset-x-0 top-3.5 z-[60] mx-auto w-fit transition-[background,border-color,box-shadow,opacity,transform] duration-500",
+          noHero || aberto ? "pointer-events-none -translate-y-3 opacity-0" : "opacity-100",
           "flex max-w-[94vw] items-center gap-1 rounded-full border py-1.5 pr-1.5 pl-3 md:py-2.5 md:pr-2.5 md:pl-4",
           "border-white/25 bg-navy/58 backdrop-blur-2xl backdrop-saturate-150",
           scrolled
@@ -186,7 +259,7 @@ export default function Header() {
       <div
         id="menu-mobile"
         hidden={!aberto}
-        className="dive-navy fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-navy-deep/96 px-6 pt-24 pb-12 backdrop-blur-xl md:hidden"
+        className="dive-navy fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-navy-deep/96 px-6 pt-[120px] pb-12 backdrop-blur-xl md:hidden"
       >
         <nav aria-label="Seções" className="flex flex-col">
           {nav.links.map((l) => {

@@ -31,6 +31,13 @@ export const pt = {
     // Login da plataforma. O produto e o site institucional dividem o mesmo
     // domínio — /login é a rota real do app, conferida no bundle.
     entrar: { label: "Entrar", href: "https://licitapublica.com.br/login" },
+    // Faixa fina no topo, sobre o filme do hero (o mesmo lugar do anúncio no
+    // hero da Legora). Aponta pra uma seção que já existe, sem promessa nova.
+    anuncio: {
+      texto: "Pesquisa de preços no rito da IN nº 65/2021",
+      link: "Saiba mais",
+      href: "#precos",
+    },
   },
 
   hero: {
@@ -38,6 +45,9 @@ export const pt = {
     // Uma cor só no título. A ênfase é feita pela quebra de linha e pelo
     // peso — não por navy/verde/ouro na mesma frase.
     titleLines: ["A inteligência artificial", "das Contratações Públicas."],
+    // Linha curta sob o título do filme: o resumo do `sub` abaixo, no tamanho
+    // da linha de apoio do hero da Legora.
+    filmeSub: "Minutas da fase interna com fonte citada",
     // Duas linhas. O briefing completo foi pra tese e pras seções.
     sub: "Uma conversa guiada gera as minutas da fase interna: contextualizadas, editáveis e juridicamente seguras.",
     ctaPrimary: "Agendar demonstração",
