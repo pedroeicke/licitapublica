@@ -1,90 +1,120 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { Plus } from "lucide-react";
 import { content } from "@/content";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 // ============================================================
-// CAMADAS — a dobra no formato do "Introducing the Legora aOS".
+// CAMADAS — cópia do "Introducing the Legora aOS".
 //
-// Lá, um vídeo 3D preso na tela avança com o scroll e as camadas do
-// sistema descem e se empilham, enquanto um card ao lado diz o que é cada
-// uma. Aqui a mesma ideia sem vídeo: as seis placas de vidro foram geradas
-// no GPT (todas como edição da primeira, pra terem o mesmo ângulo) e o
-// scroll calcula a posição de cada uma a cada quadro. Fica suave em
-// qualquer velocidade de rolagem, o texto é HTML de verdade e a página
-// carrega ~230 KB de imagem em vez de um vídeo.
+// Como lá: um trilho de ~5,5 telas com o vídeo preso na tela; o scroll
+// manda no tempo do vídeo (as placas descem e se empilham), as pílulas
+// cinza translúcidas à esquerda dizem o que é cada camada e a ativa abre
+// num card com a descrição; no canto de baixo, a pílula de progresso.
+// Medidas copiadas da Legora: pílula de 36px, fundo preto 50% com blur de
+// 27.5px, raio 24px, texto de 12px; coluna a 24px da borda e 150px do topo;
+// progresso de 110x30px a 30px do rodapé.
 //
-// Ordem: a primeira placa é a base (fontes públicas) e cada nova assenta
-// por cima. O trilho tem uma tela de altura por camada, mais uma de pausa
-// no fim com a pilha completa.
-//
-// A largura da placa também segue a altura da tela (46svh): a pilha
-// completa mede ~1,6× a largura e tem que caber abaixo do menu em notebook.
+// O vídeo é um render 3D (Blender, docs/video/camadas/blender/cena.py),
+// codificado com keyframe a cada 6 quadros e sem B-frames, pra o seek
+// acompanhar o scroll sem travar; o tempo segue o scroll com uma suavização
+// curta. No celular entra um recorte quadrado da pilha (camadas-mobile.mp4)
+// sobre um fundo no mesmo cinza das bordas, e só o card da camada ativa fica
+// na tela — a coluna inteira de pílulas não cabe na vertical.
 // ============================================================
+
+// Segundo do vídeo em que cada camada começa a descer (tabela de tempos da cena
+// em docs/video/camadas/blender/cena.py): a pílula acende junto com a peça.
+const INICIO_CAMADA = [0, 1.2, 2.35, 3.5, 4.65, 6.85, 8.05];
+const DURACAO_VIDEO = 11;
 
 export default function CamadasSection() {
   const { camadas } = content;
   const n = camadas.itens.length;
   const root = useRef<HTMLElement>(null);
-  const cardTexto = useRef<HTMLDivElement>(null);
+  const trilho = useRef<HTMLDivElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const barra = useRef<HTMLSpanElement>(null);
   const [ativa, setAtiva] = useState(0);
 
   useGSAP(
     () => {
-      const placas = gsap.utils.toArray<HTMLElement>(".cm-placa", root.current);
-      const trilho = root.current?.querySelector<HTMLElement>(".cm-trilho");
-      if (!placas.length || !trilho) return;
+      const v = video.current;
+      const t = trilho.current;
+      if (!v || !t) return;
 
-      // Distância entre uma placa e a de baixo, proporcional à largura dela.
-      const passo = () => placas[0].offsetWidth * 0.15;
-      const finalY = (i: number) => ((n - 1) / 2 - i) * passo();
-      gsap.set(placas, { xPercent: -50, yPercent: -50 });
+      // A versão (recorte quadrado no celular) é escolhida aqui e trocada se a
+      // largura cruzar o breakpoint: <source media> só é avaliado no carregamento.
+      const celular = window.matchMedia("(max-width: 767px)");
+      const escolher = () => {
+        const src = celular.matches ? "/camadas/camadas-mobile.mp4" : "/camadas/camadas.mp4";
+        if (v.getAttribute("src") === src) return;
+        const tempo = v.currentTime;
+        v.src = src;
+        v.addEventListener("loadedmetadata", () => (v.currentTime = tempo), { once: true });
+      };
+      escolher();
+      celular.addEventListener("change", escolher);
 
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        placas.forEach((p, i) => gsap.set(p, { y: finalY(i), autoAlpha: 1 }));
+        const fim = () => (v.currentTime = Math.max(0, v.duration - 0.05));
+        if (v.readyState >= 1) fim();
+        else v.addEventListener("loadedmetadata", fim, { once: true });
         setAtiva(n - 1);
-        return;
+        if (barra.current) barra.current.style.width = "100%";
+        return () => celular.removeEventListener("change", escolher);
       }
 
-      const pausa = 0.7;
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: trilho,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-          onUpdate: (st) => {
-            const i = Math.min(n - 1, Math.floor(st.progress * (n + pausa)));
-            setAtiva((anterior) => (anterior === i ? anterior : i));
-          },
+      let alvo = 0;
+      let atual = 0;
+      let raf = 0;
+      const seguir = () => {
+        atual += (alvo - atual) * 0.18;
+        if (Math.abs(alvo - atual) < 0.004) atual = alvo;
+        if (v.readyState >= 1 && Math.abs(v.currentTime - atual) > 0.001) v.currentTime = atual;
+        raf = atual === alvo ? 0 : requestAnimationFrame(seguir);
+      };
+
+      const st = ScrollTrigger.create({
+        trigger: t,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          const p = self.progress;
+          alvo = p * (v.duration || 0);
+          if (!raf) raf = requestAnimationFrame(seguir);
+          if (barra.current) barra.current.style.width = `${p * 100}%`;
+          const tempo = p * DURACAO_VIDEO;
+          let i = 0;
+          while (i < n - 1 && tempo >= INICIO_CAMADA[i + 1]) i++;
+          setAtiva((a) => (a === i ? a : i));
         },
       });
-      placas.forEach((p, i) => {
-        tl.fromTo(
-          p,
-          { y: () => -window.innerHeight * 0.85, autoAlpha: 0, scale: 0.92 },
-          { y: () => finalY(i), autoAlpha: 1, scale: 1, duration: 1, ease: "power3.out" },
-          i,
-        );
-      });
-      tl.to({}, { duration: pausa });
+
+      return () => {
+        st.kill();
+        cancelAnimationFrame(raf);
+        celular.removeEventListener("change", escolher);
+      };
     },
     { scope: root },
   );
 
-  // O texto do card troca com um fade curto, como o card da Legora.
-  useEffect(() => {
-    if (!cardTexto.current) return;
-    gsap.fromTo(cardTexto.current, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" });
-  }, [ativa]);
-
-  const atual = camadas.itens[ativa];
+  // Clicar numa pílula leva o scroll até o trecho daquela camada.
+  const irPara = (i: number) => {
+    const t = trilho.current;
+    if (!t) return;
+    const topo = t.getBoundingClientRect().top + window.scrollY;
+    const curso = t.offsetHeight - window.innerHeight;
+    // um pouco depois do início da camada, quando a peça já está entrando no quadro
+    const tempo = Math.min(DURACAO_VIDEO, (INICIO_CAMADA[i] ?? 0) + 0.8);
+    window.scrollTo({ top: topo + (tempo / DURACAO_VIDEO) * curso, behavior: "smooth" });
+  };
 
   return (
     <section ref={root} id="plataforma" aria-labelledby="camadas-titulo" className="relative">
-      <div className="mx-auto max-w-[900px] px-6 pt-28 text-center md:pt-36">
+      <div className="mx-auto max-w-[900px] px-6 pt-28 pb-10 text-center md:pt-36">
         <h2
           id="camadas-titulo"
           className="font-[family-name:var(--font-archivo)] text-[clamp(1.9rem,3.2vw,2.9rem)] leading-[1.08] font-normal tracking-[-0.035em] text-balance text-fg"
@@ -94,46 +124,56 @@ export default function CamadasSection() {
         <p className="mt-4 text-[15px] text-muted">{camadas.sub}</p>
       </div>
 
-      <div className="cm-trilho relative" style={{ height: `${(n + 1) * 90}svh` }}>
-        <div className="sticky top-0 h-svh overflow-hidden">
-          {camadas.itens.map((c, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={c.titulo}
-              src={c.img}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="cm-placa pointer-events-none absolute top-[44%] left-1/2 w-[min(64vw,430px,46svh)] select-none md:top-[54%] md:left-[58%]"
-              style={{ zIndex: i + 1 }}
-            />
-          ))}
+      <div ref={trilho} className="relative h-[550svh]">
+        <div className="sticky top-0 h-svh overflow-hidden bg-[linear-gradient(#d7d7d9_0%,#d7d7d9_50%,#ecedef_50%,#ecedef_100%)] md:bg-[#e6e6e8]">
+          <video
+            ref={video}
+            className="absolute inset-x-0 top-1/2 aspect-square w-full -translate-y-1/2 object-cover md:inset-0 md:aspect-auto md:h-full md:translate-y-0"
+            poster="/camadas/camadas-poster.jpg"
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          />
 
-          <div className="absolute inset-x-6 bottom-8 z-20 md:inset-x-auto md:top-1/2 md:bottom-auto md:left-[8vw] md:w-[320px] md:-translate-y-1/2">
-            <div className="rounded-2xl border border-line bg-white/85 p-5 shadow-[0_18px_44px_-24px_rgba(13,20,60,0.35)] backdrop-blur-md">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] tracking-[0.14em] text-muted uppercase">
-                  Camada {ativa + 1} de {n}
-                </span>
-                <span className="flex gap-1" aria-hidden="true">
-                  {camadas.itens.map((c, i) => (
-                    <span
-                      key={c.titulo}
-                      className={`h-1 w-4 rounded-full transition-colors duration-300 ${i <= ativa ? "bg-navy" : "bg-line"}`}
-                    />
-                  ))}
-                </span>
-              </div>
-              <div ref={cardTexto} aria-live="polite">
-                <p className="mt-3 text-[13px] font-semibold text-fg">{atual.titulo}</p>
-                <p className="mt-1.5 text-[14px] leading-relaxed text-muted">{atual.texto}</p>
-              </div>
-            </div>
+          <ul className="absolute inset-x-4 bottom-[76px] z-10 flex flex-col items-start gap-[9px] md:inset-x-auto md:top-[150px] md:bottom-auto md:left-6">
+            {camadas.itens.map((c, i) =>
+              i === ativa ? (
+                <li key={c.titulo} aria-current="step">
+                  <div className="w-[min(340px,calc(100vw-32px))] rounded-[24px] bg-black/50 px-5 py-[15px] text-white backdrop-blur-[27.5px]">
+                    <p className="text-[12px] text-white/70">{c.titulo}</p>
+                    <p className="mt-1.5 text-[15px] leading-[1.45]">{c.texto}</p>
+                  </div>
+                </li>
+              ) : (
+                <li key={c.titulo} className="hidden md:block">
+                  <button
+                    type="button"
+                    onClick={() => irPara(i)}
+                    className="flex h-9 items-center gap-2 rounded-[24px] bg-black/50 py-2.5 pr-2.5 pl-[15px] text-[12px] text-white backdrop-blur-[27.5px] transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                  >
+                    {c.titulo}
+                    <span className="grid h-5 w-5 place-items-center rounded-full bg-white/20">
+                      <Plus className="h-3 w-3" strokeWidth={2.25} aria-hidden />
+                    </span>
+                  </button>
+                </li>
+              ),
+            )}
+          </ul>
+
+          <div
+            aria-hidden="true"
+            className="absolute bottom-[30px] left-4 z-10 flex h-[30px] w-[110px] items-center rounded-[32px] bg-black/40 px-[15px] backdrop-blur-md md:left-6"
+          >
+            <span className="relative h-[5px] w-full overflow-hidden rounded-[5px] bg-white/25">
+              <span ref={barra} className="absolute inset-y-0 left-0 w-0 rounded-[5px] bg-white" />
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 px-6 pt-4 pb-24 md:px-10">
+      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 px-6 pt-8 pb-24 md:px-10">
         <p className="max-w-[46ch] text-[15px] text-fg">{camadas.rodape}</p>
         <a
           href={camadas.link.href}
