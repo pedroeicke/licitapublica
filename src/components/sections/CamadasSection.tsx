@@ -24,9 +24,13 @@ import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 // na tela — a coluna inteira de pílulas não cabe na vertical.
 // ============================================================
 
-// Segundo do vídeo em que cada camada começa a descer (tabela de tempos da cena
-// em docs/video/camadas/blender/cena.py): a pílula acende junto com a peça.
-const INICIO_CAMADA = [0, 1.2, 2.35, 3.5, 4.65, 6.85, 8.05];
+// Tempos do vídeo (tabela da cena em docs/video/camadas/blender/cena.py).
+// TROCA: quando o card passa para a camada — com a peça já quase pousando e o
+// nome dela à vista (trocar no início da descida mostrava o card novo com a
+// placa anterior ainda no topo). POUSO: onde o clique na pílula para — a peça
+// assentada no topo da pilha, com o nome legível.
+const TROCA_CARD = [0, 2.0, 3.15, 4.3, 5.55, 7.7, 8.8];
+const POUSO = [1.35, 2.5, 3.65, 4.8, 6.3, 8.2, 9.05];
 const DURACAO_VIDEO = 11;
 
 export default function CamadasSection() {
@@ -87,7 +91,7 @@ export default function CamadasSection() {
           if (barra.current) barra.current.style.width = `${p * 100}%`;
           const tempo = p * DURACAO_VIDEO;
           let i = 0;
-          while (i < n - 1 && tempo >= INICIO_CAMADA[i + 1]) i++;
+          while (i < n - 1 && tempo >= TROCA_CARD[i + 1]) i++;
           setAtiva((a) => (a === i ? a : i));
         },
       });
@@ -107,8 +111,7 @@ export default function CamadasSection() {
     if (!t) return;
     const topo = t.getBoundingClientRect().top + window.scrollY;
     const curso = t.offsetHeight - window.innerHeight;
-    // um pouco depois do início da camada, quando a peça já está entrando no quadro
-    const tempo = Math.min(DURACAO_VIDEO, (INICIO_CAMADA[i] ?? 0) + 0.8);
+    const tempo = POUSO[i] ?? 0;
     window.scrollTo({ top: topo + (tempo / DURACAO_VIDEO) * curso, behavior: "smooth" });
   };
 
